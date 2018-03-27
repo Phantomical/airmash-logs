@@ -2,7 +2,6 @@
 
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
-const Logger = require('./logger');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -11,7 +10,6 @@ const decodeMessage = GameAssets.decodeMessage;
 const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
-// Suppress PLAYER_UPDATE
 Logger.active_info = true;
 Logger.debug_info = true;
 
