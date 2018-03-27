@@ -13,6 +13,9 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
+OWNER = "STEAMROLLER"
+MYNAME = "LOGBOT"
+
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
 
@@ -53,7 +56,7 @@ function processChatPublic(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
-                text: "I am LOGBOT, my purpose is to log all server packets. Owner: STEAMROLLER"
+                text: "I am " + MYNAME + ", my purpose is to log all server packets. Owner: " + OWNER
             }))
         }, 500);
     }
@@ -267,7 +270,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: "LOGBOT",
+        name: MYNAME,
         // Login token for a signed-in player
         session: 'none',
         // Expand view range of bot

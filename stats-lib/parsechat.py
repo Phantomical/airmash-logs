@@ -2,13 +2,13 @@
 import logparser
 import sys
 
-sys.argv = ['', 'log-2018-03-26-2']
+sys.argv = ['', 'statsbot-log-2018-03-27-1']
 
 if len(sys.argv) < 2:
     print("usage parsechat <logfile>")
     sys.exit(-1)
 
-with open(sys.argv[1], 'r') as file:
+with open(sys.argv[1], 'r', errors='ignore') as file:
     contents = file.read()
 
     names = {}

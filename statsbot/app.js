@@ -15,6 +15,9 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
+OWNER = "STEAMROLLER"
+MYNAME = "STATSBOT"
+
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
 
@@ -98,7 +101,7 @@ function processChatPublic(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
-                text: "I'm using STARMASH, theme: STATSBOT"
+                text: "I'm using STARMASH, theme: " + MYNAME
             }))
         }, 500);
     }
@@ -107,7 +110,7 @@ function processChatPublic(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
-                text: "I am STATSBOT, owner: STEAMROLLER"
+                text: "I am " + MYNAME + ", owner: " + OWNER
             }))
         }, 500);
     }
@@ -480,7 +483,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: "STATSBOT",
+        name: MYNAME,
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',

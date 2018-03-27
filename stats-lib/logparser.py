@@ -105,8 +105,9 @@ def _parse_array(tokens):
         values.append(_parse_value(tokens))
         if tokens.current()[0] != COMMA and tokens.current()[0] != RBRACE:
             raise ParseError("Found: " + _token_tostr(tokens.current()[0]))
-        else:
+        elif tokens.current()[0] == COMMA:
             tokens.step()
+    tokens.step()
     return values    
 
 def _parse_value(tokens):
