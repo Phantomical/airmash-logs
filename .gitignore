@@ -1,0 +1,9 @@
+
+notes/
+
+logbot/node_modules/
+logbot/.vs/
+logbot/package-lock.json
+
+stats-lib/.vs/
+stats-lib/__pycache__/
