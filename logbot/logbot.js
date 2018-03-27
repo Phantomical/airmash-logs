@@ -22,76 +22,33 @@ var selfID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 
-function processLogin(packet) {
-    selfID = packet.id;
+function getDateTime() {
 
-    for (var idx in packet.players) {
-        const player = packet.players[idx];
+    var date = new Date();
 
-        Logger.log("PLAYER_NEW", {
-            id: player.id,
-            flag: player.flag,
-            team: player.team,
-            type: player.type,
-            upgrades: player.upgrades,
-            name: player.name
-        });
-        Logger.log("PLAYER_LEVEL", {
-            id: player.id,
-            level: player.level
-        });
-    }
+    var millisec = date.getMilliseconds();
+
+    var hour = date.getHours();
+    hour = (hour < 10 ? "0" : "") + hour;
+
+    var min = date.getMinutes();
+    min = (min < 10 ? "0" : "") + min;
+
+    var sec = date.getSeconds();
+    sec = (sec < 10 ? "0" : "") + sec;
+
+    var year = date.getFullYear();
+
+    var month = date.getMonth() + 1;
+    month = (month < 10 ? "0" : "") + month;
+
+    var day = date.getDate();
+    day = (day < 10 ? "0" : "") + day;
+
+    return year + ":" + month + ":" + day + ":" + hour + ":" + min + ":" + sec + ":" + millisec;
 
 }
-function processPlayerNew(packet) {
-    Logger.log("PLAYER_NEW", {
-        id: packet.id,
-        team: packet.team,
-        flag: packet.flag,
-        type: packet.type,
-        upgrades: packet.upgrades,
-        name: packet.name
-    });
-}
-function processPlayerLeave(packet) {
-    Logger.log("PLAYER_LEAVE", { id: packet.id });
-}
-function processPlayerLevel(packet) {
-    Logger.log("PLAYER_LEVEL", {
-        id: packet.id,
-        level: packet.level
-    });
-}
-function processPlayerKill(packet) {
-    Logger.log("PLAYER_KILL", {
-        id: packet.id,
-        killer: packet.killer,
-        pos: [packet.posX, packet.posY]
-    });
-}
-function processReteam(packet) {
-    for (var idx in packet.players) {
-        const player = packet.players[idx];
 
-        Logger.log("PLAYER_RETEAM", {
-            id: player.id,
-            team: player.team
-        });
-    }
-}
-function processDetailedScore(packet) {
-    // TODO: Fill this in
-}
-function processWhisper(packet) {
-
-    setTimeout(function () {
-        client.send(encodeMessage({
-            c: CLIENTPACKET.WHISPER,
-            id: packet.from,
-            text: "bounceback: " + packet.text
-        }))
-    }, 1000);
-}
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-BOT-PING") {
         setTimeout(function () {
@@ -114,89 +71,6 @@ function processPlayerRespawn(packet) {
             }));
         }, 5 * 1000);
     }
-}
-function processServerMessage(packet) {
-    // do nothing for now
-    return;
-    const options = {
-        0: '<span class="info inline"><span class="red flag"></span></span>Taken by ',
-        1: '<span class="info inline"><span class="red flag"></span></span>Returned by ',
-        2: '<span class="info inline"><span class="red flag"></span></span>Captured by ',
-        3: '<span class="info inline"><span class="blue flag"></span></span>Taken by ',
-        4: '<span class="info inline"><span class="blue flag"></span></span>Returned by ',
-        5: '<span class="info inline"><span class="blue flag"></span></span>Captured by ',
-    };
-    var msg = {};
-
-    if (packet.message.startsWith(options[0])) {
-        msg = {
-            subject: "flag taken",
-            flag: 1,
-
-        }
-    }
-}
-function processPlayerType(packet) {
-    Logger.log("PLAYER_TYPE", {
-        id: packet.id,
-        type: packet.type
-    });
-}
-function processGameFlag(packet) {
-    if (packet.id !== 0) {
-        Logger.log("FLAG_TAKEN", {
-            id: packet.id,
-            flag: packet.flag,
-            type: packet.type
-        });
-        if (packet.flag == 1) {
-            flagCarrierBlue = packet.id;
-        }
-        else if (packet.flag == 2) {
-            flagCarrierRed = packet.id;
-        }
-    }
-    else {
-        Logger.log("FLAG_RETURNED", {
-            flag: packet.flag,
-            // 1 indicates return, 2 indicates cap
-            type: packet.type
-        });
-        if (packet.flag == 1) {
-            flagCarrierBlue = 0;
-        }
-        else if (packet.flag == 2) {
-            flagCarrierRed = 0;
-        }
-    }
-}
-function processPlayerUpdate(packet) {
-    if (packet.id == flagCarrierRed) {
-        Logger.log("FLAG_UPDATE", {
-            flag: 2,
-            carrier: packet.id,
-            pos: [packet.posX, packet.posY]
-        });
-    }
-    else if (packet.id == flagCarrierBlue) {
-        Logger.log("FLAG_UPDATE", {
-            flag: 1,
-            carrier: packet.id,
-            pos: [packet.posX, packet.posY]
-        });
-    }
-
-    Logger.optional("PLAYER_UPDATE", {
-        id: packet.id,
-        upgrades: packet.upgrades,
-        pos: [packet.posX, packet.posY]
-    });
-}
-function processLeaveHorizon(packet) {
-    Logger.debug("LEAVE_HORIZON", {
-        id: packet.id,
-        type: packet.type
-    });
 }
 
 function logError(packet) {
@@ -368,6 +242,7 @@ function logPacket(packet) {
 
     switch (packet.c) {
         default:
+            packet.time = getDateTime();
             packet.c = decodePacketType(packet.c);
             console.log(JSON.stringify(packet));
     }
@@ -395,8 +270,7 @@ const onopen = function () {
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
         name: "LOGBOT",
-        // This might be different for a signed-in player
-        // not sure what this does either
+        // Login token for a signed-in player
         session: 'none',
         // Expand view range of bot
         horizonX: 32767,
