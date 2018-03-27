@@ -13,8 +13,8 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
-OWNER = "STEAMROLLER"
-MYNAME = "LOGBOT"
+const OWNER = "STEAMROLLER"
+const MYNAME = "LOGBOT"
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
