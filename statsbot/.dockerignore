@@ -1,0 +1,7 @@
+﻿
+.git/
+.vs/
+node_modules/
+log
+NodejsConsoleApp1.sln
+NodejsConsoleApp1.njsproj
