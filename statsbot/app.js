@@ -225,6 +225,32 @@ function processLeaveHorizon(packet) {
         type: packet.type
     });
 }
+function processPlayerHit(packet) {
+    for (var idx in packet.players) {
+        const player = packet.players[idx];
+
+        Logger.log("PLAYER_HIT", {
+            id: packet.id,
+            type: packet.type,
+            pos: [packet.posX, packet.posY],
+            owner: packet.owner,
+            player_id: player.id,
+            player_health: player.health
+        });
+    }
+}
+function processPlayerFire(packet) {
+    for (var idx in packet.projectiles) {
+        const projectile = packet.projectiles[idx];
+
+        Logger.log("PLAYER_FIRE", {
+            id: packet.id,
+            energy: packet.energy,
+            proj_id: projectile.id,
+            proj_type: projectile.type,
+        });
+    }
+}
 
 function logError(packet) {
     let obj = {};
@@ -405,7 +431,10 @@ function logPacket(packet) {
 
         // Events that we might want to use in the future
         case SERVERPACKET.PLAYER_FIRE:
+            processPlayerFire(packet);
+            break;
         case SERVERPACKET.PLAYER_HIT:
+            processPlayerHit(packet);
             break;
 
         case SERVERPACKET.LOGIN:
