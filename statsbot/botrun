@@ -1,16 +1,19 @@
 #!/bin/bash
 
 while true; do
-	time_to_midnight=$(($(date -d 'tomorrow 00:00:00' +%s) - $(date +%s) + 1))
 	filename=/srv/ftp/statsbot-log-$(date +%F)
 	
-	timeout -s 15 $time_to_midnight nodejs app.js >> log &2>>errlog
+	nodejs app.js > ~/statsbot-log &2>> ~/statsbot-errlog
 	
-	if [ $? -eq 124 ]; then
-		# Timeout occured, update bot
-		git pull
-		sudo cp log $filename
-	fi
+	#update bot
+	ctr=0
+	while [ -e $filename-$ctr ]; do
+		((ctr++))
+	done
+	
+	sudo cp ~/statsbot-log $filename-$ctr
+	
+	git pull
 	
 	sleep 5
 done
