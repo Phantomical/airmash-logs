@@ -27,7 +27,7 @@ var flagCarrierBlue = 0;
 
 function processLogin(packet) {
     selfID = packet.id;
-    Logger.log("LOGIN");
+    Logger.log("LOGIN", {});
 
     for (var idx in packet.players) {
         const player = packet.players[idx];
