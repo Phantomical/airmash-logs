@@ -10,7 +10,7 @@ while true; do
 		# Timeout occured, update bot
 		git pull
 		sudo cp log $filename
-		sleep 5		
 	fi
 	
+	sleep 5
 done
