@@ -1,9 +1,14 @@
 #!/bin/bash
 
-while true; do
-	filename=/srv/ftp/statsbot-log-$(date +%F)
+exitval=0
+
+while [ $exitval -ne 1 ]; do
+	time_to_midnight=$(($(date -d 'tomorrow 00:00:00' +%s) - $(date +%s) + 1))
+	filename=~/logs/statsbot-log-$(date +%F)
 	
-	nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
+	timeout $time_to_midnight nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
+	
+	$exitval=$?
 	
 	#update bot
 	ctr=0

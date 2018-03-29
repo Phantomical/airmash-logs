@@ -22,6 +22,7 @@ var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
 
 var selfID = 0;
+var ownerID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 
@@ -56,9 +57,17 @@ function processPlayerNew(packet) {
         upgrades: packet.upgrades,
         name: packet.name
     });
+
+    if (packet.name === OWNER) {
+        ownerID = packet.id;
+    }
 }
 function processPlayerLeave(packet) {
     Logger.log("PLAYER_LEAVE", { id: packet.id });
+
+    if (packet.id == ownerID) {
+        ownerID = 0;
+    }
 }
 function processPlayerLevel(packet) {
     Logger.log("PLAYER_LEVEL", {
@@ -87,14 +96,14 @@ function processDetailedScore(packet) {
     // TODO: Fill this in
 }
 function processWhisper(packet) {
-
-    setTimeout(function () {
-        client.send(encodeMessage({
-            c: CLIENTPACKET.WHISPER,
-            id: packet.from,
-            text: "bounceback: " + packet.text
-        }))
-    }, 1000);
+    if (packet.from == ownerID) {
+        if (packet.text === ':restart') {
+            process.exit(2)
+        }
+        else if (packet.text === ':shutdown') {
+            process.exit(1)
+        }
+    }
 }
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-SWAM-PING") {
