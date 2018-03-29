@@ -3,7 +3,7 @@
 while true; do
 	filename=/srv/ftp/statsbot-log-$(date +%F)
 	
-	nodejs app.js > ~/statsbot-log &2>> ~/statsbot-errlog
+	nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
 	
 	#update bot
 	ctr=0
