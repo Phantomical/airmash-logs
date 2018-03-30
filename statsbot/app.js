@@ -45,6 +45,10 @@ function processLogin(packet) {
             id: player.id,
             level: player.level
         });
+
+        if (player.name === OWNER) {
+            ownerID = packet.id;
+        }
     }
 
 }
@@ -96,7 +100,8 @@ function processDetailedScore(packet) {
     // TODO: Fill this in
 }
 function processWhisper(packet) {
-    if (packet.from == ownerID) {
+    // Apparently packet.from is the current player 
+    if (packet.to == ownerID) {
         if (packet.text === ':restart') {
             process.exit(2)
         }
