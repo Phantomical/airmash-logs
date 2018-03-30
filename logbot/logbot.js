@@ -73,6 +73,17 @@ function processPlayerRespawn(packet) {
         }, 5 * 1000);
     }
 }
+function processChatWhisper(packet) {
+    // Apparently packet.from is the current player 
+    if (packet.to == ownerID) {
+        if (packet.text === ':restart') {
+            process.exit(2)
+        }
+        else if (packet.text === ':shutdown') {
+            process.exit(1)
+        }
+    }
+}
 
 function logError(packet) {
     let obj = {};
@@ -239,6 +250,9 @@ function logPacket(packet) {
     }
     else if (packet.c == SERVERPACKET.PLAYER_RESPAWN) {
         processPlayerRespawn(packet);
+    }
+    else if (packet.c == SERVERPACKET.CHAT_WHISPER) {
+        processChatWhisper(packet);
     }
 
     switch (packet.c) {
