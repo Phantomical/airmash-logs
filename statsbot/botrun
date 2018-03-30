@@ -1,5 +1,7 @@
 #!/bin/bash
 
+d "${0%/*}"
+
 exitval=0
 
 while [ $exitval -ne 1 ]; do
