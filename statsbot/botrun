@@ -10,7 +10,7 @@ while [ $exitval -ne 1 ]; do
 	
 	timeout $time_to_midnight nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
 	
-	$exitval=$?
+	exitval=$?
 	
 	#update bot
 	ctr=0
