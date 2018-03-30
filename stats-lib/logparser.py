@@ -16,7 +16,7 @@ def _tokenize(entry: str):
     while entry != "":
         ident_match = re.match(r'^[A-Za-z_][A-Za-z_0-9]*', entry)
         num_match = re.match(r'^[0-9]+(\.[0-9]+)?', entry)
-        str_match = re.match(r'^"(\\"|[^"])*"', entry)
+        str_match = re.match(r'^"(\\\\|\\"|[^"])*"', entry)
 
         if entry.startswith('['):
             yield (LBRACE, None)

@@ -2,8 +2,6 @@
 import logparser
 import sys
 
-sys.argv = ['', 'statsbot-log-2018-03-27-1']
-
 if len(sys.argv) < 2:
     print("usage parsechat <logfile>")
     sys.exit(-1)
