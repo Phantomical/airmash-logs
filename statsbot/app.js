@@ -25,6 +25,7 @@ var selfID = 0;
 var ownerID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
+var gameStart = new Date();
 
 function processLogin(packet) {
     selfID = packet.id;
@@ -108,6 +109,21 @@ function processWhisper(packet) {
         else if (packet.text === ':shutdown') {
             process.exit(1)
         }
+    }
+
+    if (packet.text === ':gametime') {
+        var time = new Date() - gameStart;
+
+        setTimeout(function () {
+            client.send(encodeMessage({
+                c: CLIENTPACKET.whisper,
+                id: packet.to,
+                text: '' + time.getHours() +
+                    ' hours, ' + time.getMinutes() +
+                    ' minutes, and ' + time.getSeconds() +
+                    ' seconds have elapsed since this game started.'
+            }))
+        }, 500);
     }
 }
 function processChatPublic(packet) {
@@ -303,6 +319,9 @@ function processScoreBoard(packet) {
         com: "spectate",
         data: "" + nearestID
     }))
+}
+function processServerCustom(packet) {
+    gameStart = new Date();
 }
 
 function logError(packet) {
@@ -534,6 +553,10 @@ function logPacket(packet) {
             break;
         case SERVERPACKET.PLAYER_TYPE:
             processPlayerType(packet);
+            break;
+
+        case SERVERPACKET.SERVER_CUSTOM:
+            processServerCustom(packet);
             break;
 
         case SERVERPACKET.EVENT_LEAVEHORIZON:
