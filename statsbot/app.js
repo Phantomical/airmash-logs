@@ -266,6 +266,44 @@ function processPlayerFire(packet) {
         });
     }
 }
+function processScoreBoard(packet) {
+    let distance2 = function (a, b) {
+        return (a[0] - b[0]) * (a[0] - b[0]) +
+            (a[1] - b[1]) * (a[1] - b[1]);
+    }
+
+    var avgx = 0.0;
+    var avgy = 0.0;
+
+    for (var idx in packet.rankings) {
+        var ranking = packet.rankings[idx];
+
+        avgx += ranking.x;
+        avgy += ranking.y;
+    }
+
+    avgx /= packet.rankings.length;
+    avgy /= packet.rankings.length;
+
+    var maxdist2 = 1e12;
+    var nearestID = 0;
+    for (var idx in packet.rankings) {
+        var ranking = packet.rankings[idx];
+
+        var dist2 = distance2([ranking.x, ranking.y], [avgx, avgy]);
+
+        if (dist2 < maxdist2) {
+            maxdist2 = dist2;
+            nearestID = ranking.id;
+        }
+    }
+
+    client.send(encodeMessage({
+        c: CLIENTPACKET.COMMAND,
+        com: "spectate",
+        data: "" + nearestID
+    }))
+}
 
 function logError(packet) {
     let obj = {};
@@ -427,7 +465,7 @@ function logPacket(packet) {
     switch (packet.c) {
         // Events pertaining to the current player only
         case SERVERPACKET.PLAYER_UPGRADE: // Current player is upgraded
-        case SERVERPACKET.PLAYER_POWERUP: 
+        case SERVERPACKET.PLAYER_POWERUP:
         case SERVERPACKET.PING_RESULT:
         case SERVERPACKET.CHAT_TEAM: // Don't record team chat
         case SERVERPACKET.EVENT_BOOST:
@@ -532,8 +570,8 @@ const onopen = function () {
         // not sure what this does either
         session: 'none',
         // Expand view range of bot
-        horizonX: 32767,
-        horizonY: 32767,
+        horizonX: (1 << 16) - 1,
+        horizonY: (1 << 16) - 1,
         flag: 'ca'
     }));
 
@@ -546,7 +584,7 @@ const onopen = function () {
         }));
     }, 1000);
 };
-const onclose = function() {
+const onclose = function () {
     client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
     client.binaryType = 'arraybuffer';
 
