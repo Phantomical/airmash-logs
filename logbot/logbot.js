@@ -83,6 +83,14 @@ function processChatWhisper(packet) {
             process.exit(1)
         }
     }
+
+    if (packet.text === ':specme') {
+        client.send(encodeMessage({
+            c: CLIENTPACKET.COMMAND,
+            com: "spectate",
+            data: "" + packet.to
+        }))
+    }
 }
 
 function logError(packet) {
@@ -288,8 +296,8 @@ const onopen = function () {
         // Login token for a signed-in player
         session: 'none',
         // Expand view range of bot
-        horizonX: 32767,
-        horizonY: 32767,
+        horizonX: (1 << 16) - 1,
+        horizonY: (1 << 16) - 1,
         flag: 'ca'
     }));
 
