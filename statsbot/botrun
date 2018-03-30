@@ -1,6 +1,6 @@
 #!/bin/bash
 
-d "${0%/*}"
+cd "${0%/*}"
 
 exitval=0
 
