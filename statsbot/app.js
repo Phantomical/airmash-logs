@@ -12,7 +12,7 @@ const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
 // Suppress PLAYER_UPDATE
-Logger.active_info = true;
+Logger.active_info = false;
 Logger.debug_info = true;
 
 const OWNER = "STEAMROLLER"

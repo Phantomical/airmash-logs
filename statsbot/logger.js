@@ -1,15 +1,13 @@
 ﻿
+const jsesc = require('jsesc');
+
 const matchQuote = new RegExp('"', "g");
 const matchNewLine = new RegExp('\n', "g");
 const matchCR = new RegExp('\r', "g");
 const matchSlash = new RegExp('\\$');
 
 function sanitizeString(str) {
-    str = str.replace(matchQuote, '\\"');
-    str = str.replace(matchNewLine, '\\n');
-    str = str.replace(matchCR, '\\r');
-    str = str.replace(matchSlash, '\\ ')
-    return str;
+    return jsesc(str, { 'quotes': 'double' });
 }
 
 function getDateTime() {

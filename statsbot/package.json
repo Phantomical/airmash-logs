@@ -9,6 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "buffer-dataview": "0.0.2",
+    "jsesc": "^2.5.1",
     "npm": "^5.8.0",
     "ws": "^5.1.0"
   }
