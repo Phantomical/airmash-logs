@@ -469,7 +469,6 @@ function logPacket(packet) {
             processGameFlag(packet);
             break;
 
-        case SERVERPACKET.EVENT_LEAVEHORIZON:
 
         // TODO: Present this better
         // and use for far away positions?
@@ -494,6 +493,7 @@ function logPacket(packet) {
             processPlayerType(packet);
             break;
 
+        case SERVERPACKET.EVENT_LEAVEHORIZON:
         default:
             packet.c = decodePacketType(packet.c);
             Logger.log("PACKET", packet);
