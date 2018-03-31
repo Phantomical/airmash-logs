@@ -132,6 +132,15 @@ function processWhisper(packet) {
             }))
         }, 500);
     }
+    else if (packet.text.toUpperCase() === "HELP") {
+        setTimeout(function () {
+            client.send(encodeMessage({
+                c: CLIENTPACKET.WHISPER,
+                id: packet.from,
+                text: "whisper commands: -game-time"
+            }))
+        }, 500);
+    }
 }
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-SWAM-PING") {
