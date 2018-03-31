@@ -19,6 +19,7 @@ while [ $exitval -ne 56 ]; do
 	done
 	
 	sudo cp ~/statsbot-log $filename-$ctr
+	gzip $filename-$ctr
 	
 	git pull
 	npm install

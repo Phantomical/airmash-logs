@@ -10,9 +10,6 @@ const decodeMessage = GameAssets.decodeMessage;
 const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
-Logger.active_info = true;
-Logger.debug_info = true;
-
 const OWNER = "STEAMROLLER"
 const MYNAME = "LOGBOT"
 
@@ -22,6 +19,7 @@ client.binaryType = 'arraybuffer';
 var selfID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
+var ownerID = 0;
 
 function getDateTime() {
 
@@ -253,6 +251,16 @@ function logPacket(packet) {
     if (packet.c == SERVERPACKET.LOGIN) {
         selfID = packet.id;
     }
+    else if (packet.c == SERVERPACKET.PLAYER_NEW) {
+        if (packet.name === OWNER) {
+            ownerID = packet.id;
+        }
+    }
+    else if (packet.c == SERVERPACKET.PLAYER_LEAVE) {
+        if (packet.id == ownerID) {
+            ownerID = 0;
+        }
+    }
     else if (packet.c == SERVERPACKET.CHAT_PUBLIC) {
         processChatPublic(packet);
     }
@@ -266,7 +274,6 @@ function logPacket(packet) {
     switch (packet.c) {
         default:
             packet.time = getDateTime();
-            packet.c = decodePacketType(packet.c);
             console.log(JSON.stringify(packet));
     }
 }
