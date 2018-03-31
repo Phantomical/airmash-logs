@@ -117,9 +117,9 @@ function processWhisper(packet) {
             var msPerHour = msPerMinute * 60;
 
             var time = new Date() - gameStart;
-            var text = '' + Math.round(time / msPerHour) +
-                ' hours, ' + (Math.round(time / msPerMinute) % 60) +
-                ' minutes, and ' + (Math.round(time / 1000) % 60) +
+            var text = '' + Math.floor(time / msPerHour) +
+                ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
+                ' minutes, and ' + (Math.floor(time / 1000) % 60) +
                 ' seconds have elapsed since this game started.';
             console.log(gameStart);
             console.log(new Date());
