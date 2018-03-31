@@ -4,7 +4,7 @@ cd "${0%/*}"
 
 exitval=0
 
-while [ $exitval -ne 1 ]; do
+while [ $exitval -ne 56 ]; do
 	time_to_midnight=$(($(date -d 'tomorrow 00:00:00' +%s) - $(date +%s) + 1))
 	filename=~/logs/statsbot-log-$(date +%F)
 	

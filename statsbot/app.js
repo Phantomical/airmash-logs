@@ -107,7 +107,7 @@ function processWhisper(packet) {
             process.exit(2)
         }
         else if (packet.text === ':shutdown') {
-            process.exit(1)
+            process.exit(56)
         }
     }
 
