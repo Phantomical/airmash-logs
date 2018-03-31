@@ -16,7 +16,7 @@ Logger.active_info = true;
 Logger.debug_info = true;
 
 const OWNER = "STEAMROLLER"
-const MYNAME = "STATSBOT2"
+const MYNAME = "STATSBOT"
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
