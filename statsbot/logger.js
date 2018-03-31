@@ -56,7 +56,7 @@ function makeMessage(type, obj) {
 
 function log(type, obj) {
     obj.time = getDateTime();
-    console.log(makeMessage(type, obj)); 
+    console.log(makeMessage(type, obj));
 }
 
 module.exports = {

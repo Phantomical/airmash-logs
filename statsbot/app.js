@@ -12,11 +12,11 @@ const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
 // Suppress PLAYER_UPDATE
-Logger.active_info = false;
+Logger.active_info = true;
 Logger.debug_info = true;
 
 const OWNER = "STEAMROLLER"
-const MYNAME = "STATSBOT"
+const MYNAME = "STATSBOT2"
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
@@ -111,17 +111,24 @@ function processWhisper(packet) {
         }
     }
 
-    if (packet.text === ':gametime') {
-        var time = new Date() - gameStart;
-
+    if (packet.text.toUpperCase() === '-GAME-TIME') {
         setTimeout(function () {
+            var msPerMinute = 60 * 1000;
+            var msPerHour = msPerMinute * 60;
+
+            var time = new Date() - gameStart;
+            var text = '' + Math.round(time / msPerHour) +
+                ' hours, ' + (Math.round(time / msPerMinute) % 60 - 1) +
+                ' minutes, and ' + (Math.round(time / 1000) % 60) +
+                ' seconds have elapsed since this game started.';
+            console.log(gameStart);
+            console.log(new Date());
+            console.log(time);
+
             client.send(encodeMessage({
-                c: CLIENTPACKET.whisper,
-                id: packet.to,
-                text: '' + time.getHours() +
-                    ' hours, ' + time.getMinutes() +
-                    ' minutes, and ' + time.getSeconds() +
-                    ' seconds have elapsed since this game started.'
+                c: CLIENTPACKET.WHISPER,
+                id: packet.from,
+                text: text
             }))
         }, 500);
     }
