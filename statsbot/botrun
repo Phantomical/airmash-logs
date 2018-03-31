@@ -21,6 +21,7 @@ while [ $exitval -ne 56 ]; do
 	sudo cp ~/statsbot-log $filename-$ctr
 	
 	git pull
+	npm install
 	
 	sleep 5
 done
