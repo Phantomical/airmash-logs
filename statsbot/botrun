@@ -20,6 +20,8 @@ while [ $exitval -ne 56 ]; do
 	
 	sudo cp ~/statsbot-log $filename-$ctr
 	gzip $filename-$ctr
+	rm ~/logs/stats-lib.tar.gz
+	tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
 	
 	git pull
 	npm install
