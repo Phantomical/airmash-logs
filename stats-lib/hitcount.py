@@ -2,7 +2,7 @@
 import logparser
 import sys
 
-#sys.argv = ['', 'log']
+sys.argv = ['', 'statsbot-log-2018-03-31-4']
 
 if len(sys.argv) < 2:
     print("usage parsechat <logfile>")

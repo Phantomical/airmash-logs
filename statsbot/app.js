@@ -121,9 +121,6 @@ function processWhisper(packet) {
                 ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
                 ' minutes, and ' + (Math.floor(time / 1000) % 60) +
                 ' seconds have elapsed since this game started.';
-            console.log(gameStart);
-            console.log(new Date());
-            console.log(time);
 
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
