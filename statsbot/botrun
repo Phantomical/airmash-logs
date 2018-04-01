@@ -14,7 +14,7 @@ while [ $exitval -ne 56 ]; do
 	
 	#update bot
 	ctr=0
-	while [ -e $filename-$ctr ]; do
+	while [ -e $filename-$ctr.gz ]; do
 		((ctr++))
 	done
 	
