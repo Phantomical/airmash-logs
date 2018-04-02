@@ -25,8 +25,7 @@ npm install
 
 sleep 5
 
-if [ $exitval -ne 56 ]; do 
+if [ $exitval -ne 56 ]; do
 	# Restart the script with the updated one
 	exec "$(which $0)"
 done
-	
