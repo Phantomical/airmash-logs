@@ -16,8 +16,8 @@ def _tokenize(entry: str):
 
     while entry != "":
         ident_match = re.match(r'^[A-Za-z_][A-Za-z_0-9]*', entry)
-        num_match = re.match(r'^[0-9]+\.[0-9]+', entry)
-        int_match = re.match(r'^[0-9]+', entry)
+        num_match = re.match(r'^-?[0-9]+\.[0-9]+', entry)
+        int_match = re.match(r'^-?[0-9]+', entry)
         str_match = re.match(r'^"(\\\\|\\"|[^"])*"', entry)
 
         if entry.startswith('['):
@@ -180,10 +180,7 @@ def parse_log(log: str):
             yield parse_entry(line)
         except ParseError as e:
             import sys
-            raise ParseError(str(e) + '\nParseError: Occurred at line ' + str(i+1) + '\n').with_traceback(sys.exc_info()[2])
-        except Exception as e:
-            import sys
-            print(sys.exec_info())
+            print("Error occurred at line " + (i+1) + ", skipping entry.", sys.stderr)
 
 def _escape_str(strval: str):
     return strval.translate(str.maketrans({
