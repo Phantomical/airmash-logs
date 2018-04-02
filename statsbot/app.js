@@ -342,7 +342,7 @@ function processScoreBoard(packet) {
     for (var idx in packet.rankings) {
         var ranking = packet.rankings[idx];
 
-        var dist2 = distance2([ranking.x, ranking.y], [avgx, avgy]);
+        var dist2 = distance2([ranking.x, ranking.y], [0, 0]);
 
         if (dist2 < maxdist2) {
             maxdist2 = dist2;
@@ -356,7 +356,13 @@ function processScoreBoard(packet) {
         data: "" + nearestID
     }))
 }
-
+function processServerCustom(packet) {
+    obj = JSON.parse(packet.data);
+    Logger.log("GAME_WIN", {
+        team: e.w,
+        bounty: e.b
+    });
+}
 function logError(packet) {
     let obj = {};
 
@@ -587,11 +593,12 @@ function logPacket(packet) {
         case SERVERPACKET.PLAYER_TYPE:
             processPlayerType(packet);
             break;
+        case SERVERPACKET.EVENT_LEAVEHORIZON:
+            processLeaveHorizon(packet);
 
         case SERVERPACKET.SERVER_CUSTOM:
             break;
 
-        case SERVERPACKET.EVENT_LEAVEHORIZON:
         default:
             packet.c = decodePacketType(packet.c);
             Logger.log("PACKET", packet);

@@ -7,7 +7,7 @@ const matchCR = new RegExp('\r', "g");
 const matchSlash = new RegExp('\\$');
 
 function sanitizeString(str) {
-    return jsesc(str, { 'quotes': 'double' });
+    return jsesc(str, { 'quotes': 'double', 'minimal': true });
 }
 
 function getDateTime() {
