@@ -2,29 +2,31 @@
 
 cd "${0%/*}"
 
-exitval=0
+time_to_midnight=$(($(date -d 'tomorrow 08:00:00' +%s) - $(date +%s) + 1))
+filename=~/logs/statsbot-log-$(date +%F)
 
-while [ $exitval -ne 56 ]; do
-	time_to_midnight=$(($(date -d 'tomorrow 08:00:00' +%s) - $(date +%s) + 1))
-	filename=~/logs/statsbot-log-$(date +%F)
-	
-	timeout $time_to_midnight nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
-	
-	exitval=$?
-	
-	#update bot
-	ctr=0
-	while [ -e $filename-$ctr.gz ]; do
-		((ctr++))
-	done
-	
-	sudo cp ~/statsbot-log $filename-$ctr
-	gzip $filename-$ctr
-	rm ~/logs/stats-lib.tar.gz
-	tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
-	
-	git pull
-	npm install
-	
-	sleep 5
+timeout $time_to_midnight nodejs app.js > ~/statsbot-log 2>> ~/statsbot-errlog
+
+exitval=$?
+
+#update bot
+ctr=0
+while [ -e $filename-$ctr.gz ]; do
+	((ctr++))
 done
+
+python3 ../stats-lib/anonymise.py ~/statsbot-log > $filename-$ctr 
+gzip $filename-$ctr
+rm ~/logs/stats-lib.tar.gz
+tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
+
+git pull
+npm install
+
+sleep 5
+
+if [ $exitval -ne 56 ]; do 
+	# Restart the script with the updated one
+	exec "$(which $0)"
+done
+	

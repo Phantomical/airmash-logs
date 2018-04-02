@@ -9,13 +9,15 @@ STRING = 4
 NUMBER = 5
 COMMA  = 6
 COLON  = 7
+INT    = 8
 
 def _tokenize(entry: str):
     tokens = []
 
     while entry != "":
         ident_match = re.match(r'^[A-Za-z_][A-Za-z_0-9]*', entry)
-        num_match = re.match(r'^[0-9]+(\.[0-9]+)?', entry)
+        num_match = re.match(r'^[0-9]+\.[0-9]+', entry)
+        int_match = re.match(r'^[0-9]+', entry)
         str_match = re.match(r'^"(\\\\|\\"|[^"])*"', entry)
 
         if entry.startswith('['):
@@ -41,6 +43,10 @@ def _tokenize(entry: str):
         elif str_match:
             result = str_match
             yield (STRING, entry[result.start(0)+1:result.end(0)-1])
+            entry = entry[result.end(0):]
+        elif int_match:
+            result = int_match
+            yield (INT, int(entry[result.start(0):result.end(0)]))
             entry = entry[result.end(0):]
         else:
             # Ignore unregocnized tokens
@@ -84,12 +90,15 @@ def _token_tostr(token):
         return "NUMBER"
     if token == COMMA:
         return ","
+    if token == INT:
+        return "INT"
     return None
 
 def _parse_string(str):
-    str = re.sub(r'\\"', '"', str)
-    str = re.sub(r'\\n', '\n', str)
-    str = re.sub(r'\\r', '\r', str)
+    str = re.sub(r'\\\\', r'\\', str)
+    str = re.sub(r'\\"', r'"', str)
+    str = re.sub(r'\\n', r'\n', str)
+    str = re.sub(r'\\r', r'\r', str)
     return str
 
 def _parse_ident(tokens):
@@ -120,6 +129,8 @@ def _parse_value(tokens):
         return value
     if type == LBRACE:
         return _parse_array(tokens)
+    if type == INT:
+        return value
     raise ParseError("Found: " + _token_tostr(type))
 
 def _parse_entry(tokens):
@@ -173,6 +184,48 @@ def parse_log(log: str):
         except Exception as e:
             import sys
             print(sys.exec_info())
+
+def _escape_str(strval: str):
+    return strval.translate(str.maketrans({
+        '\\': '\\\\', 
+        '"': '\\"',
+        '\n': '\\n',
+        '\r': '\\r'
+    }))
+
+def _escape_value(val):
+    if type(val) is str:
+        escaped = val.translate(str.maketrans({
+            '\\': '\\\\', 
+            '"': '\\"',
+            '\n': '\\n',
+            '\r': '\\r'
+        }))
+
+        return'"' + escaped + '"'
+
+    if type(val) is list:
+        return '[' + str.join(', ', [_escape_value(x) for x in val]) + ']'
+
+    return str(val)
+
+
+def build_entry(entry: dict):
+    """Create an entry record from a dictionary, the
+entry label is dictated by the 'record_type' field.
+Will throw an excption if there is no 'record_type'
+entry."""
+
+    str = '[' + entry['record_type']
+
+    for (key, val) in entry.items():
+        if key == 'record_type':
+            continue
+
+        str += ', ' + key + ': ' + _escape_value(val)
+
+    return str + ']'
+
 
 
 

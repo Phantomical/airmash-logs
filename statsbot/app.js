@@ -96,6 +96,8 @@ function processReteam(packet) {
             team: player.team
         });
     }
+    
+    gameStart = new Date();
 }
 function processDetailedScore(packet) {
     // TODO: Fill this in
@@ -134,9 +136,30 @@ function processWhisper(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.from,
-                text: "whisper commands: -game-time"
+                text: "whisper commands: -game-time, -anon-me"
             }))
         }, 500);
+    }
+    else if (packet.text.toUpperCase() == "-ANON-ME") {
+        Logger.log("ANONYMISE", { id: packet.from });
+
+        setTimeout(function () {
+            client.send(encodeMessage({
+                c: CLIENTPACKET.WHISPER,
+                id: packet.from,
+                text: "You will now be anonymised from STATSBOT logs for this session."
+            }))
+        }, 200);
+        setTimeout(function () {
+            client.send(encodeMessage({
+                c: CLIENTPACKET.WHISPER,
+                id: packet.from,
+                text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
+            }))
+        }, 400);
+    }
+    else if (packet.text.toUpperCase() == '-ANON-ME-QUIET') {
+        Logger.log("ANONYMISE", { id: packet.from });
     }
 }
 function processChatPublic(packet) {
@@ -332,9 +355,6 @@ function processScoreBoard(packet) {
         com: "spectate",
         data: "" + nearestID
     }))
-}
-function processServerCustom(packet) {
-    gameStart = new Date();
 }
 
 function logError(packet) {
@@ -569,7 +589,6 @@ function logPacket(packet) {
             break;
 
         case SERVERPACKET.SERVER_CUSTOM:
-            processServerCustom(packet);
             break;
 
         case SERVERPACKET.EVENT_LEAVEHORIZON:
