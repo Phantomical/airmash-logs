@@ -15,7 +15,7 @@ while [ -e $filename-$ctr.gz ]; do
 	((ctr++))
 done
 
-python3 ../stats-lib/anonymise.py ~/statsbot-log > $filename-$ctr 
+python3 ../stats-lib/anonymize.py ~/statsbot-log > $filename-$ctr 
 gzip $filename-$ctr
 rm ~/logs/stats-lib.tar.gz
 tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
