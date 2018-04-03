@@ -1,2 +1,10 @@
-changelog 2018-04-02:
+Changelog 2018-04-02:
 	- logparser will now assign the 'c' field of PACKET entries as 'record_type'
+
+Changelog 2018-04-03:
+	- Added a public -game-time command to the global chat which will cause 
+	  statsbot to respond with time since the game started
+	- Added a private (whisper) -anon-me command to statsbot, which will strip 
+	  the user's name and id from the logs and replace them with -1, it also
+	  deletes any PLAYER_UPDATE packets corresponding to the user. See
+	  anonymize.py to see how it is done
