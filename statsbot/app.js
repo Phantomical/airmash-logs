@@ -190,6 +190,23 @@ function processChatPublic(packet) {
             }))
         }, 500);
     }
+    else if (packet.text.toUpperCase() === '-GAME-TIME') {
+        setTimeout(function () {
+            var msPerMinute = 60 * 1000;
+            var msPerHour = msPerMinute * 60;
+
+            var time = new Date() - gameStart;
+            var text = '' + Math.floor(time / msPerHour) +
+                ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
+                ' minutes, and ' + (Math.floor(time / 1000) % 60) +
+                ' seconds have elapsed since this game started.';
+
+            client.send(encodeMessage({
+                c: CLIENTPACKET.CHAT,
+                text: text
+            }))
+        }, 500);
+    }
     else {
         Logger.log("CHAT_PUBLIC", {
             id: packet.id,
@@ -363,6 +380,7 @@ function processServerCustom(packet) {
         bounty: e.b
     });
 }
+
 function logError(packet) {
     let obj = {};
 
