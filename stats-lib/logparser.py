@@ -1,5 +1,6 @@
 
 import re
+import sys
 
 EOL    = 0
 LBRACE = 1
@@ -166,11 +167,19 @@ def _parse_record(tokens):
 
     return obj
 
+def _fixup_packet(entry):
+    """Change PACKET to refer to the message type instead"""
+
+    if entry['record_type'] == 'PACKET':
+        entry['record_type'] = entry['c']
+
+    return entry
+
 def parse_entry(entry: str):
     """Parses a log entry into a dict"""
     tokens = _tokenize(entry.strip())
     
-    return _parse_record(TokenList(tokens))
+    return _fixup_packet(_parse_record(TokenList(tokens)))
 
 def parse_log(log: str):
     """Parses a log into a list of entries"""
@@ -179,8 +188,7 @@ def parse_log(log: str):
         try:
             yield parse_entry(line)
         except ParseError as e:
-            import sys
-            print("Error occurred at line " + (i+1) + ", skipping entry.", sys.stderr)
+            print("Error occurred at line " + str(i+1) + ", skipping entry.", file=sys.stderr)
 
 def _escape_str(strval: str):
     return strval.translate(str.maketrans({
