@@ -104,7 +104,7 @@ function processDetailedScore(packet) {
 }
 function processWhisper(packet) {
     // Apparently packet.from is the current player 
-    if (packet.to == ownerID) {
+    if (packet.to == ownerID || packet.from == ownerID) {
         if (packet.text === ':restart') {
             process.exit(2)
         }
