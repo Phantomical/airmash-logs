@@ -2,7 +2,7 @@
 import logparser
 import sys
 
-#sa wwdasys.argv = ['', 'logs/statsbot-log-2018-03-30']
+sys.argv = ['', 'logs/statsbot-log-2018-03-30']
 
 if len(sys.argv) < 2:
     print("usage parsechat <logfile>")
@@ -18,9 +18,8 @@ with open(sys.argv[1], 'r', errors='ignore') as file:
 
     for entry in logparser.parse_log(contents):
         if entry['record_type'] == 'PLAYER_NEW':
-            if entry['id'] != -1:
-                names[entry['id']] = entry['name']
-                teams[entry['team']-1].add(entry['id'])
+            names[entry['id']] = entry['name']
+            teams[entry['team']-1].add(entry['id'])
         elif entry['record_type'] == 'PLAYER_LEAVE':
             for i in range(0, 1):
                 teams[i].discard(entry['id'])
