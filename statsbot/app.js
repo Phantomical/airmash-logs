@@ -1,5 +1,18 @@
 'use strict';
 
+if (!Buffer.alloc) {
+    Buffer.alloc = function (size, fill) {
+        var buf = new Buffer(size);
+        if (!fill) {
+            buf.fill(0);
+        }
+        else {
+            buf.fill(fill);
+        }
+        return buf;
+    }
+}
+
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
@@ -15,8 +28,15 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
-const OWNER = "STEAMROLLER"
-const MYNAME = "STATSBOT"
+var OWNER = "STEAMROLLER"
+var MYNAME = "STATSBOT"
+
+// Check that we are running in nodejs
+if (typeof module !== 'undefined' && module.exports) {
+    if (process.argv.length >= 2) {
+        OWNER = process.argv[1];
+    }
+}
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
