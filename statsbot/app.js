@@ -116,8 +116,11 @@ function processReteam(packet) {
             team: player.team
         });
     }
-    
-    gameStart = new Date();
+
+    setTimeout(function () {
+        gameStart = new Date();
+        console.error("Reset game time")
+    }, 30 * 1000);
 }
 function processDetailedScore(packet) {
     // TODO: Fill this in
