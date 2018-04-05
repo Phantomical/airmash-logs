@@ -3,6 +3,7 @@
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
+const genName = require('./namegen');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -651,20 +652,19 @@ const onmessage = function (e) {
     }
 };
 const onopen = function () {
-    var name = MYNAME + "v" + Math.random().toString(10).substring(2);
     console.log(name);
     client.send(encodeMessage({
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: "2v" + MYNAME,
+        name: genName(),
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
         // Expand view range of bot
-        horizonX: 1000,//(1 << 16) - 1,
-        horizonY: 1000,//(1 << 16) - 1,
-        flag: 'ca'
+        horizonX: (1 << 16) - 1,
+        horizonY: (1 << 16) - 1,
+        flag: 'us'
     }));
 
     // Make statsbot spectate on joining    
