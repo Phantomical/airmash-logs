@@ -655,13 +655,13 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: MYNAME + "-" + Math.random().toString(36).substring(7),
+        name: MYNAME + "v3",
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
         // Expand view range of bot
-        horizonX: (1 << 16) - 1,
-        horizonY: (1 << 16) - 1,
+        horizonX: 1000,//(1 << 16) - 1,
+        horizonY: 1000,//(1 << 16) - 1,
         flag: 'ca'
     }));
 
