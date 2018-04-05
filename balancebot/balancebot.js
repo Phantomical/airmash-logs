@@ -184,8 +184,8 @@ client.on('close', onclose);
 
 bots = []
 names = {}
-teams = [[],[]]
-botids = []
+teams = [[], []]
+otherbots = []
 
 knownbots = [
     "STATSBOT",
@@ -197,36 +197,135 @@ knownbots = [
     "STUPIDBOT"
 ]
 
-function isBot(name) {
-    if (name === "STATSBOT") {
-
+function isKnownBot(name) {
+    for (var idx in knownbots) {
+        if (name === knownbots[idx]) {
+            return true;
+        }
     }
-    el
+    return false;
 }
 
 function processLogin(packet) {
+    bots.push(packet.id);
+
     for (var idx in packet.players) {
         var player = packet.players[idx];
 
         names[player.id] = player.name;
 
         teams[player.team - 1].push(player.id);
+
+        if (isKnownBot(name)) {
+            otherbots.push({ id: player.id, team: player.team });
+        }
     }
+}
+function processPlayerNew(packet) {
+    names[player.id] = player.name;
+    teams[player.team - 1].push(player.id);
+}
+function processPlayerLeave(packet) {
+    delete names[player.id];
+    names = names.filter(function (item) {
+        return item !== player.id;
+    });
+
+    teams[0] = teams[0].filter(function (item) {
+        return item !== player.id;
+    });
+    teams[1] = teams[1].filter(function (item) {
+        return item !== player.id;
+    });
+}
+function processPlayerReteam(packet) {
+    teams = [[],[]]
+    for (var idx in packet.players) {
+        var player = packet.players[idx];
+
+        teams[player.team - 1].push(player.id);
+    }
+
+    // Kill all bots but the main bot
+    for (var idx = 0; idx < bots.length; idx++) {
+        bots[idx].drop();
+    }
+
+    bots = [new BalanceBot(MYNAME, true)];
+
+    setTimeout(bots[0].balance(), 5000);
 }
 
 class BalanceBot {
-
+    drop() {
+        this.ws.close();
+        this.dropped = true;
+    }
 
     onmessage(e) {
         const packet = decodeMessage(e);
 
-        if (packet.c === SERVERPACKET.LOGIN) {
+        if (packet.c === SERVERPACKET.PING) {
+            client.send(encodeMessage({
+                c: CLIENTPACKET.PONG,
+                num: t.num
+            }));
+        }
+        else if (packet.c === SERVERPACKET.LOGIN) {
             this.selfID = packet.id;
+            this.team = packet.team;
 
             if (this.isoperator) {
                 processLogin(packet);
             }
         }
+        else if (packet.c === SERVERPACKET.CHAT_PUBLIC) {
+            if (packet.text.toUpperCase() === "-BOT-PING") {
+                setTimeout(function () {
+                    client.send(encodeMessage({
+                        c: CLIENTPACKET.WHISPER,
+                        id: packet.id,
+                        text: "I am " + MYNAME + ", owner: " + OWNER
+                    }))
+                }, 500);
+            }
+        }
+
+        if (this.isoperator) {
+            if (packet.c === SERVERPACKET.PLAYER_NEW) {
+                processPlayerNew(packet);
+            }
+            else if (packet.c === SERVERPACKET.PLAYER_LEAVE) {
+                processPlayerLeave(packet);
+            }
+            else if (packet.c === SERVERPACKET.PLAYER_RETEAM) {
+                processPlayerReteam(packet);
+            }
+        }
+    }
+    onopen(e) {
+        this.ws.send(encodeMessage({
+            c: CLIENTPACKET.LOGIN,
+            // This has to be 5 otherwise the server will send an error
+            protocol: 5,
+            name: MYNAME,
+            // This might be different for a signed-in player
+            // not sure what this does either
+            session: 'none',
+            // Minimal view range to reduce server load
+            horizonX: 1,
+            horizonY: 1,
+            flag: 'ca'
+        }));
+    }
+
+    balance() {
+        if (!this.isoperator) return;
+
+        const red = teams[0].length;
+        const blue = teams[1].length;
+
+
     }
 
     constructor(name, isoperator) {
@@ -235,6 +334,8 @@ class BalanceBot {
         this.ws.binaryType = 'arraybuffer';
 
         this.selfID = 0;
+        this.dropped = false;
+        this.team = 0;
     }
 
 }
