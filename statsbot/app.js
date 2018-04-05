@@ -165,6 +165,12 @@ function processWhisper(packet) {
     else if (packet.text.toUpperCase() == '-ANON-ME-QUIET' && !lowChat) {
         Logger.log("ANONYMISE", { id: packet.from });
     }
+
+    Logger.log("CHAT_WHISPER", {
+        to: packet.to,
+        from: packet.from,
+        text: packet.text
+    });
 }
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-SWAM-PING") {
