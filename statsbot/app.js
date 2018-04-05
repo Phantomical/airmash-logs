@@ -657,7 +657,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: name,
+        name: "2v" + MYNAME,
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
