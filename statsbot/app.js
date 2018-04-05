@@ -145,23 +145,25 @@ function processWhisper(packet) {
             }))
         }, 500);
     }
-    else if (packet.text.toUpperCase() == "-ANON-ME" && !lowChat) {
+    else if (packet.text.toUpperCase() == "-ANON-ME") {
         Logger.log("ANONYMISE", { id: packet.from });
 
-        setTimeout(function () {
-            client.send(encodeMessage({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.from,
-                text: "You will now be anonymised from STATSBOT logs for this session."
-            }))
-        }, 200);
-        setTimeout(function () {
-            client.send(encodeMessage({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.from,
-                text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
-            }))
-        }, 400);
+        if (!lowChat) {
+            setTimeout(function () {
+                client.send(encodeMessage({
+                    c: CLIENTPACKET.WHISPER,
+                    id: packet.from,
+                    text: "You will now be anonymised from STATSBOT logs for this session."
+                }))
+            }, 200);
+            setTimeout(function () {
+                client.send(encodeMessage({
+                    c: CLIENTPACKET.WHISPER,
+                    id: packet.from,
+                    text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
+                }))
+            }, 400);
+        }
     }
     else if (packet.text.toUpperCase() == '-ANON-ME-QUIET' && !lowChat) {
         Logger.log("ANONYMISE", { id: packet.from });
