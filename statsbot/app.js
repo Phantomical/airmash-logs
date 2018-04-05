@@ -651,11 +651,13 @@ const onmessage = function (e) {
     }
 };
 const onopen = function () {
+    var name = MYNAME + "v" + Math.random().toString(10).substring(2);
+    console.log(name);
     client.send(encodeMessage({
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: MYNAME + "v" + Math.random().toString(10).substring(5),
+        name: name,
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
