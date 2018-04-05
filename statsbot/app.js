@@ -654,7 +654,6 @@ const onmessage = function (e) {
     }
 };
 const onopen = function () {
-    console.log(name);
     client.send(encodeMessage({
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
