@@ -18,13 +18,6 @@ Logger.debug_info = true;
 var OWNER = "STEAMROLLER"
 var MYNAME = "STATSBOT"
 
-// Check that we are running in nodejs
-if (typeof module !== 'undefined' && module.exports) {
-    if (process.argv.length >= 2) {
-        MYNAME = process.argv[2];
-    }
-}
-
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
 
