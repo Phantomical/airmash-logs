@@ -16,7 +16,7 @@ Logger.active_info = true;
 Logger.debug_info = true;
 
 var OWNER = "STEAMROLLER"
-var MYNAME = "STATSBOTv2"
+var MYNAME = "STATSBOT";
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
 client.binaryType = 'arraybuffer';
@@ -26,6 +26,7 @@ var ownerID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var gameStart = new Date();
+var lowChat = true;
 
 function processLogin(packet) {
     selfID = packet.id;
@@ -116,7 +117,7 @@ function processWhisper(packet) {
         }
     }
 
-    if (packet.text.toUpperCase() === '-GAME-TIME') {
+    if (packet.text.toUpperCase() === '-GAME-TIME' && !lowChat) {
         setTimeout(function () {
             var msPerMinute = 60 * 1000;
             var msPerHour = msPerMinute * 60;
@@ -134,7 +135,7 @@ function processWhisper(packet) {
             }))
         }, 500);
     }
-    else if (packet.text.toUpperCase() === "HELP") {
+    else if (packet.text.toUpperCase() === "HELP" && !lowChat) {
         setTimeout(function () {
             client.send(encodeMessage({
                 c: CLIENTPACKET.WHISPER,
@@ -143,7 +144,7 @@ function processWhisper(packet) {
             }))
         }, 500);
     }
-    else if (packet.text.toUpperCase() == "-ANON-ME") {
+    else if (packet.text.toUpperCase() == "-ANON-ME" && !lowChat) {
         Logger.log("ANONYMISE", { id: packet.from });
 
         setTimeout(function () {
@@ -161,7 +162,7 @@ function processWhisper(packet) {
             }))
         }, 400);
     }
-    else if (packet.text.toUpperCase() == '-ANON-ME-QUIET') {
+    else if (packet.text.toUpperCase() == '-ANON-ME-QUIET' && !lowChat) {
         Logger.log("ANONYMISE", { id: packet.from });
     }
 }
@@ -648,7 +649,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: MYNAME,
+        name: MYNAME + "-" + Math.random().toString(36).substring(7),
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
