@@ -1,18 +1,5 @@
 'use strict';
 
-if (!Buffer.alloc) {
-    Buffer.alloc = function (size, fill) {
-        var buf = new Buffer(size);
-        if (!fill) {
-            buf.fill(0);
-        }
-        else {
-            buf.fill(fill);
-        }
-        return buf;
-    }
-}
-
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
@@ -127,7 +114,7 @@ function processDetailedScore(packet) {
 }
 function processWhisper(packet) {
     // Apparently packet.from is the current player 
-    if (packet.to == ownerID || packet.from == ownerID) {
+    if (packet.to === ownerID || packet.from === ownerID) {
         if (packet.text === ':restart') {
             process.exit(2)
         }
