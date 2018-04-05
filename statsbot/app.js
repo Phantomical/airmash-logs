@@ -21,7 +21,7 @@ var MYNAME = "STATSBOT"
 // Check that we are running in nodejs
 if (typeof module !== 'undefined' && module.exports) {
     if (process.argv.length >= 2) {
-        OWNER = process.argv[1];
+        MYNAME = process.argv[2];
     }
 }
 
