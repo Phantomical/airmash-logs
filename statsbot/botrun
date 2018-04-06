@@ -1,9 +1,9 @@
 #!/bin/bash
 
-cd "${0%/*}"
-
 time_to_midnight=$(($(date -d 'tomorrow 08:00:00' +%s) - $(date +%s) + 1))
 filename=~/logs/statsbot-log-$(date +%F)
+
+echo $time_to_midnight
 
 timeout $time_to_midnight node app.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
