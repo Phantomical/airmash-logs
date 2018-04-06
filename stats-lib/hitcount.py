@@ -1,9 +1,10 @@
+#!/bin/python3
 
 import logparser
 import sys
 
 if len(sys.argv) < 2:
-    print("usage parsechat <logfile>")
+    print("usage: hitcount.py <logfile>")
     sys.exit(-1)
 
 with open(sys.argv[1], 'r', errors='ignore') as file:

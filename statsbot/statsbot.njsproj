@@ -41,9 +41,13 @@
     <Compile Include="logger.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="namegen.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include=".dockerignore">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="botrun" />
     <Content Include="Dockerfile" />
     <Content Include="package.json" />
   </ItemGroup>

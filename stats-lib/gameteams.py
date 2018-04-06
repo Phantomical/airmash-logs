@@ -1,11 +1,10 @@
+#!/bin/python3
 
 import logparser
 import sys
 
-sys.argv = ['', 'logs/statsbot-log-2018-03-30']
-
 if len(sys.argv) < 2:
-    print("usage parsechat <logfile>")
+    print("usage gameteams.py <logfile>")
     sys.exit(-1)
 
 with open(sys.argv[1], 'r', errors='ignore') as file:
