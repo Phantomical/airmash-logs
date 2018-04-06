@@ -8,3 +8,8 @@ Changelog 2018-04-03:
 	  the user's name and id from the logs and replace them with -1, it also
 	  deletes any PLAYER_UPDATE packets corresponding to the user. See
 	  anonymize.py to see how it is done
+	  
+Changelog 2018-04-05
+	- Added GAME_WIN log entry for when a game is won
+	- Added SCORE_BOARD_DATA entry per player for when the score board 
+	  is updated
