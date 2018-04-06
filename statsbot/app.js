@@ -397,13 +397,11 @@ function processScoreBoard(packet) {
     }
 }
 function processServerCustom(packet) {
-    Logger.log("SERVER_CUSTOM", packet);
-    process.exit(0);
-    //obj = JSON.parse(packet.data);
-    //Logger.log("GAME_WIN", {
-    //    team: e.w,
-    //    bounty: e.b
-    //});
+    obj = JSON.parse(packet.data);
+    Logger.log("GAME_WIN", {
+        team: e.w,
+        bounty: e.b
+    });
 }
 
 function logError(packet) {
@@ -636,6 +634,7 @@ function logPacket(packet) {
             break;
         case SERVERPACKET.EVENT_LEAVEHORIZON:
             processLeaveHorizon(packet);
+            break;
 
         case SERVERPACKET.SERVER_CUSTOM:
             processServerCustom(packet);
