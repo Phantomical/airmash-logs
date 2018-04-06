@@ -1,6 +1,8 @@
 
 .vs/
 notes/
+logs/
+stats-lib/logs/
 
 logbot/node_modules/
 logbot/.vs/
