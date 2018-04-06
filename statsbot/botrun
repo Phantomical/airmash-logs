@@ -15,6 +15,8 @@ while [ -e $filename-$ctr.gz ]; do
 	((ctr++))
 done
 
+ctr=$(printf "%02d" $ctr)
+
 if [ -s ~/statsbot-log ]; then
 	python3 ../stats-lib/anonymize.py ~/statsbot-log > $filename-$ctr 
 	gzip $filename-$ctr
