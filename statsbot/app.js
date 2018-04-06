@@ -109,14 +109,14 @@ function processDetailedScore(packet) {
 }
 function processWhisper(packet) {
     // Apparently packet.from is the current player 
-    if (packet.to === ownerID || packet.from === ownerID) {
-        if (packet.text === ':restart') {
-            process.exit(2)
-        }
-        else if (packet.text === ':shutdown') {
-            process.exit(56)
-        }
-    }
+    //if (packet.to === ownerID || packet.from === ownerID) {
+    //    if (packet.text === ':restart') {
+    //        process.exit(2)
+    //    }
+    //    else if (packet.text === ':shutdown') {
+    //        process.exit(56)
+    //    }
+    //}
 
     if (packet.text.toUpperCase() === '-GAME-TIME' && !lowChat) {
         setTimeout(function () {
@@ -385,6 +385,16 @@ function processScoreBoard(packet) {
         com: "spectate",
         data: "" + nearestID
     }))
+
+    for (var idx in packet.data) {
+        var player = packet.data[idx];
+
+        Logger.log("SCORE_BOARD_DATA", {
+            id: player.id,
+            score: player.score,
+            level: player.level
+        });
+    }
 }
 function processServerCustom(packet) {
     obj = JSON.parse(packet.data);
@@ -600,11 +610,9 @@ function logPacket(packet) {
         case SERVERPACKET.GAME_FLAG:
             processGameFlag(packet);
             break;
-
-
-        // TODO: Present this better
-        // and use for far away positions?
+        
         case SERVERPACKET.SCORE_BOARD:
+            processScoreBoard(packet);
             break;
 
         case SERVERPACKET.SCORE_DETAILED_CTF:
@@ -628,6 +636,7 @@ function logPacket(packet) {
             processLeaveHorizon(packet);
 
         case SERVERPACKET.SERVER_CUSTOM:
+            processServerCustom(packet);
             break;
 
         default:

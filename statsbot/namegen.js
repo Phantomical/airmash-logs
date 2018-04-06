@@ -65,7 +65,8 @@ const animals = [
     "frog",
     "fish",
     "amoeba",
-    "goose"
+    "goose",
+    "penguin"
 ];
 
 function getRandomItem(array) {

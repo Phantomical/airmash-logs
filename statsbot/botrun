@@ -15,8 +15,13 @@ while [ -e $filename-$ctr.gz ]; do
 	((ctr++))
 done
 
-python3 ../stats-lib/anonymize.py ~/statsbot-log > $filename-$ctr 
-gzip $filename-$ctr
+ctr=$(printf -v j "%02d" $ctr)
+
+if [ -s ~/statsbot-log ]; then
+	python3 ../stats-lib/anonymize.py ~/statsbot-log > $filename-$ctr 
+	gzip $filename-$ctr
+fi
+
 rm ~/logs/stats-lib.tar.gz
 tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
 
