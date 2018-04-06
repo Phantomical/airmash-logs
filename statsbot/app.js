@@ -105,7 +105,20 @@ function processReteam(packet) {
     }, 30 * 1000);
 }
 function processDetailedScore(packet) {
-    // TODO: Fill this in
+    for (var idx in packet.scores) {
+        var score = packet.scores[idx];
+
+        Logger.log("PLAYER_DETAILED_SCORE", {
+            id: score.id,
+            level: score.level,
+            captures: score.captures,
+            score: score.score,
+            kills: score.kills,
+            deaths: score.deaths,
+            damage: score.damage,
+            ping: score.ping
+        });
+    }
 }
 function processWhisper(packet) {
     // Apparently packet.from is the current player 
@@ -686,6 +699,13 @@ const onopen = function () {
             data: "-3"
         }));
     }, 1000);
+
+    // Request a score board every 5s
+    setInterval(function () {
+        client.send(encodeMessage({
+            c: CLIENTPACKET.SCOREDETAILED
+        }));
+    }, 5 * 1000);
 };
 const onclose = function () {
     client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
