@@ -387,7 +387,7 @@ function processScoreBoard(packet) {
 
         var dist2 = distance2([ranking.x, ranking.y], [0, 0]);
 
-        if (dist2 < maxdist2) {
+        if (dist2 < maxdist2 && dist2 != 0) {
             maxdist2 = dist2;
             nearestID = ranking.id;
         }
@@ -410,7 +410,7 @@ function processScoreBoard(packet) {
     }
 }
 function processServerCustom(packet) {
-    obj = JSON.parse(packet.data);
+    var obj = JSON.parse(packet.data);
     Logger.log("GAME_WIN", {
         team: e.w,
         bounty: e.b
@@ -681,7 +681,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: genName(),
+        name: "STATSBOT",// genName(),
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
