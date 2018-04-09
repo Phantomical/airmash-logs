@@ -367,6 +367,21 @@ function processScoreBoard(packet) {
             (a[1] - b[1]) * (a[1] - b[1]);
     }
 
+    for (var idx in packet.rankings) {
+        var ranking = packet.rankings[idx];
+        if (ranking.id === selfID) {
+            if (ranking.x === 0 && ranking.y === 0) {
+                // If we aren't spectating, start spectating
+                client.send(encodeMessage({
+                    c: CLIENTPACKET.COMMAND,
+                    com: "spectate",
+                    data: "-3"
+                }));
+                return;
+            }
+        }
+    }
+
     var avgx = 0.0;
     var avgy = 0.0;
 
@@ -412,8 +427,8 @@ function processScoreBoard(packet) {
 function processServerCustom(packet) {
     var obj = JSON.parse(packet.data);
     Logger.log("GAME_WIN", {
-        team: e.w,
-        bounty: e.b
+        team: obj.w,
+        bounty: obj.b
     });
 }
 
