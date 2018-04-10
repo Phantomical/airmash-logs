@@ -432,6 +432,7 @@ function processScoreBoard(packet) {
 }
 function processServerCustom(packet) {
     var obj = JSON.parse(packet.data);
+    lastWinner = obj.w;
     Logger.log("GAME_WIN", {
         team: obj.w,
         bounty: obj.b
