@@ -13,7 +13,7 @@ class AirmashClient {
         if (!buildwsfn) {
             buildwsfn = function (url) {
                 return new WebSocket(serverURL);
-            }
+            };
         }
 
         this.ws = buildwsfn(serverURL);
@@ -210,7 +210,7 @@ class AirmashClient {
     }
     onclose(msg, code, reason) {
         if (this.restartOnDc) {
-            this.ws = buildwsfn;
+            this.ws = this.buildwsfn(this.serverURL);
             this.ws.binaryType = 'arraybuffer';
 
             this.ws.on("open", this.onopen);
