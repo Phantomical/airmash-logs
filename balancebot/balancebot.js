@@ -7,11 +7,230 @@ const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 const encodeMessage = GameAssets.encodeMessage;
 const decodeMessage = GameAssets.decodeMessage;
-const PlayHost = GameAssets.playHost;
-const PlayPath = GameAssets.playPath;
+const playHost = GameAssets.playHost;
+const playPath = GameAssets.playPath;
+
+const hostURL = 'wss://game-' + playHost + '.airma.sh/' + playPath;
 
 const OWNER = "STEAMROLLER"
 const MYNAME = "BALANCEBOT"
+// This shouldn't be set above 8
+const MAXBOTS = 4;
+
+const REDTEAM = 0;
+const BLUETEAM = 1;
+
+var bots = [];
+var teams = [[], []];
+var balancebots = [];
+
+var knownbots = [
+    "STATSBOT",
+    "LOGBOT"
+];
+
+function isKnownBot(name) {
+    for (var idx in knownbots) {
+        if (name === knownbots[idx]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function initialize() {
+    bots.push(new BalanceBot(true));
+}
+function startBots(numbots) {
+    for (var i = 0; i < numbots; ++i) {
+        bots.push(new BalanceBot(false));
+    }
+}
+function removeUnneeded(req_red, req_blue) {
+    if (req_blue === undefined) {
+        if (req_red <= 0) return remove_unneeded(0, -req_red);
+        return remove_unneeded(req_red, 0);
+    }
+
+    redcnt = 0;
+    bluecnt = 0;
+
+    for (var i = 0; i < bots.length; ++i) {
+        if (bots[i].myTeam === REDTEAM) {
+            if (redcnt >= req_red) {
+                bots[i].close();
+            }
+            redcnt++;
+        }
+        else {
+            if (bluecnt >= req_blue) {
+                bots[i].close();
+            }
+            bluecnt++;
+        }
+    }
+
+    bots = bots.filter(function (bot) { return bot.closed; });
+
+    if (bots.length != 0) {
+        bots[0].am_operator = true;
+    }
+}
+function botsToJoin(nred, nblue, botsred, botsblue, controllerteam) {
+    if (botsred === botsblue)
+        return 0;
+
+    var teamdiff = Math.abs(nred - nblue);
+    var botdiff = Math.abs(botsred - botsblue);
+
+    return teamdiff + 2 * Math.max(botdiff - teamdiff, 0);
+}
+function balance() {
+    const nred = teams[0].length;
+    const nblue = teams[1].length;
+
+    const redbots = teams[0].filter(function (item) {
+        return bots.indexOf(item) > -1;
+    }).length;
+    const bluebots = teams[1].filter(function (item) {
+        return bots.indexOf(item) > -1;
+    }).length;
+
+    setTimeout(function () {
+        removeUnneeded(botdiff);
+    }, 1 * 1000);
+
+    if (balancebots.length === 0) {
+        setTimeout(initialize, 10 * 60 * 1000);
+    }
+}
+
+
+class BalanceBot {
+    constructor(am_operator) {
+        this.am_operator = am_operator;
+        this.ws = new WebSocket(hostURL);
+        this.myID = 0;
+        this.myTeam = 0;
+        this.closed = false;
+        this.isneeded = false;
+
+        this.ws.onopen = this.onopen;
+        this.ws.onmessage = this.onmessage;
+        this.ws.onclose = this.onclose;
+    }
+
+    close() {
+        this.closed = true;
+        this.ws.close();
+    }
+
+    onopen() {
+        ws.send(encodeMessage({
+            c: CLIENTPACKET.LOGIN,
+            // This has to be 5 otherwise the server will send an error
+            protocol: 5,
+            name: MYNAME,
+            // Login token for a signed-in player
+            session: 'none',
+            // Expand view range of bot
+            horizonX: (1 << 16) - 1,
+            horizonY: (1 << 16) - 1,
+            flag: 'ca'
+        }));
+    }
+    onmessage(msg) {
+        var packet = decodeMessage(msg);
+
+        if (packet.c === SERVERPACKET.PING) {
+            this.ws.send(encodeMessage({
+                c: CLIENTPACKET.PONG,
+                num: packet.num
+            }));
+        }
+        else if (packet.c === SERVERPACKET.LOGIN) {
+            this.selfID = packet.id;
+            this.myTeam = packet.team;
+
+            if (this.am_operator) {
+                teams = [[], []];
+                bots = [];
+
+                for (var idx in packet.players) {
+                    var player = packet.players[idx];
+
+                    teams[player.team - 1].push(player.id);
+
+                    if (isKnownBot(player.name)) {
+                        bots.add(player.id);
+                    }
+                }
+            }
+        }
+        else if (packet.c === SERVERPACKET.PLAYER_NEW) {
+            if (this.am_operator) {
+                teams[packet.team - 1] = packet.id;
+
+                if (isKnownBot(player.name)) {
+                    bots.add(packet.id);
+                }
+            }
+        }
+        else if (packet.c === SERVERPACKET.PLAYER_LEAVE) {
+            if (this.am_operator) {
+                var redidx = teams[0].indexOf(packet.id);
+                var blueidx = teams[1].indexOf(packet.id);
+
+                if (redidx > -1) {
+                    teams[0].splice(redidx);
+                }
+                if (blueidx > -1) {
+                    teams[1].splice(blueidx);
+                }
+
+                var botidx = bots.indexOf(packet.id);
+
+                if (botidx > -1) {
+                    bots.splice(packet.id);
+
+                    for (var i = balancebots.length; i >= 0; ++i) {
+                        if (balancebots[i].team == packet.team) {
+                            balancebots[i].close()
+                            balancebots.splice(i);
+                        }
+                    }
+                }
+            }
+        }
+        else if (packet.c === SERVERPACKET.SERVER_CUSTOM) {
+            this.close()
+
+            balancebots = []
+
+            // Leave until after reteam
+            setTimeout(function () {
+                var bot = new BalanceBot(true);
+                balancebots.push(bot);
+
+                bot.balance();
+            }, 31 * 1000);
+        }
+        else if (packet.c === SERVERPACKET.CHAT_PUBLIC) {
+            if (packet.text.toUpperCase() === '-BOT-PING') {
+                this.ws.send(encodeMessage({
+                    c: CLIENTPACKET.WHISPER,
+                    id: packet.id,
+                    text: "I am " + MYNAME + " . My purpose is to " +
+                        "ensure there are the same number of bots " +
+                        "on each team. Owner: " + OWNER
+                }))
+            }
+        }
+    }
+    onclose() {
+
+    }
+}
 
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-BOT-PING") {
@@ -182,160 +401,6 @@ client.on('open', onopen);
 client.on('message', onmessage);
 client.on('close', onclose);
 
-bots = []
-names = {}
-teams = [[], []]
-otherbots = []
-
-knownbots = [
-    "STATSBOT",
-    "LOGBOT",
-    "SAGGYBOT",
-    "SHITBOT",
-    "SUFFLEBOT",
-    "SIGMABOT",
-    "STUPIDBOT"
-]
-
-function isKnownBot(name) {
-    for (var idx in knownbots) {
-        if (name === knownbots[idx]) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function processLogin(packet) {
-    bots.push(packet.id);
-
-    for (var idx in packet.players) {
-        var player = packet.players[idx];
-
-        names[player.id] = player.name;
-
-        teams[player.team - 1].push(player.id);
-
-        if (isKnownBot(name)) {
-            otherbots.push({ id: player.id, team: player.team });
-        }
-    }
-}
-function processPlayerNew(packet) {
-    names[player.id] = player.name;
-    teams[player.team - 1].push(player.id);
-}
-function processPlayerLeave(packet) {
-    delete names[player.id];
-    names = names.filter(function (item) {
-        return item !== player.id;
-    });
-
-    teams[0] = teams[0].filter(function (item) {
-        return item !== player.id;
-    });
-    teams[1] = teams[1].filter(function (item) {
-        return item !== player.id;
-    });
-}
-function processPlayerReteam(packet) {
-    teams = [[],[]]
-    for (var idx in packet.players) {
-        var player = packet.players[idx];
-
-        teams[player.team - 1].push(player.id);
-    }
-
-    // Kill all bots but the main bot
-    for (var idx = 0; idx < bots.length; idx++) {
-        bots[idx].drop();
-    }
-
-    bots = [new BalanceBot(MYNAME, true)];
-
-    setTimeout(bots[0].balance(), 5000);
-}
-
-class BalanceBot {
-    drop() {
-        this.ws.close();
-        this.dropped = true;
-    }
-
-    onmessage(e) {
-        const packet = decodeMessage(e);
-
-        if (packet.c === SERVERPACKET.PING) {
-            client.send(encodeMessage({
-                c: CLIENTPACKET.PONG,
-                num: t.num
-            }));
-        }
-        else if (packet.c === SERVERPACKET.LOGIN) {
-            this.selfID = packet.id;
-            this.team = packet.team;
-
-            if (this.isoperator) {
-                processLogin(packet);
-            }
-        }
-        else if (packet.c === SERVERPACKET.CHAT_PUBLIC) {
-            if (packet.text.toUpperCase() === "-BOT-PING") {
-                setTimeout(function () {
-                    client.send(encodeMessage({
-                        c: CLIENTPACKET.WHISPER,
-                        id: packet.id,
-                        text: "I am " + MYNAME + ", owner: " + OWNER
-                    }))
-                }, 500);
-            }
-        }
-
-        if (this.isoperator) {
-            if (packet.c === SERVERPACKET.PLAYER_NEW) {
-                processPlayerNew(packet);
-            }
-            else if (packet.c === SERVERPACKET.PLAYER_LEAVE) {
-                processPlayerLeave(packet);
-            }
-            else if (packet.c === SERVERPACKET.PLAYER_RETEAM) {
-                processPlayerReteam(packet);
-            }
-        }
-    }
-    onopen(e) {
-        this.ws.send(encodeMessage({
-            c: CLIENTPACKET.LOGIN,
-            // This has to be 5 otherwise the server will send an error
-            protocol: 5,
-            name: MYNAME,
-            // This might be different for a signed-in player
-            // not sure what this does either
-            session: 'none',
-            // Minimal view range to reduce server load
-            horizonX: 1,
-            horizonY: 1,
-            flag: 'ca'
-        }));
-    }
-
-    balance() {
-        if (!this.isoperator) return;
-
-        const red = teams[0].length;
-        const blue = teams[1].length;
 
 
-    }
 
-    constructor(name, isoperator) {
-        this.isoperator = isoperator;
-        this.ws = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
-        this.ws.binaryType = 'arraybuffer';
-
-        this.selfID = 0;
-        this.dropped = false;
-        this.team = 0;
-    }
-
-}
