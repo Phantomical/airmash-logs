@@ -28,6 +28,8 @@ var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var gameStart = new Date();
 var lowChat = true;
+var isSpectating = false;
+var lastWinner = 0;
 
 function processLogin(packet) {
     selfID = packet.id;
@@ -233,14 +235,31 @@ function processChatPublic(packet) {
             }))
         }, 500);
     }
-    else {
-        Logger.log("CHAT_PUBLIC", {
-            id: packet.id,
-            text: packet.text
-        });
+    else if (packet.text.toUpperCase() === '-LAST-WIN') {
+        setTimeout(function () {
+            var text = '';
+            if (lastWinner === 1)
+                text = "The last game was won by red team.";
+            else if (lastWinner === 2)
+                text = "The last game was won by blue team.";
+            else
+                text = "STATSBOT has been restarted since this game " +
+                    "and does not know which team won the last game.";
+
+            client.send(encodeMessage({
+                c: CLIENTPACKET.CHAT,
+                text: text
+            }))
+        }, 500);
     }
+
+    Logger.log("CHAT_PUBLIC", {
+        id: packet.id,
+        text: packet.text
+    });
 }
 function processPlayerRespawn(packet) {
+    isSpectating = false;
     if (packet.id == selfID) {
         // Make statsbot spectate on new game   
         setTimeout(function () {
@@ -367,52 +386,39 @@ function processScoreBoard(packet) {
             (a[1] - b[1]) * (a[1] - b[1]);
     }
 
-    for (var idx in packet.rankings) {
-        var ranking = packet.rankings[idx];
-        if (ranking.id === selfID) {
-            if (ranking.x === 0 && ranking.y === 0) {
-                // If we aren't spectating, start spectating
-                client.send(encodeMessage({
-                    c: CLIENTPACKET.COMMAND,
-                    com: "spectate",
-                    data: "-3"
-                }));
-                return;
+    if (isSpectating) {
+        var avgx = 0.0;
+        var avgy = 0.0;
+
+        for (var idx in packet.rankings) {
+            var ranking = packet.rankings[idx];
+
+            avgx += ranking.x;
+            avgy += ranking.y;
+        }
+
+        avgx /= packet.rankings.length;
+        avgy /= packet.rankings.length;
+
+        var maxdist2 = 1e12;
+        var nearestID = 0;
+        for (var idx in packet.rankings) {
+            var ranking = packet.rankings[idx];
+
+            var dist2 = distance2([ranking.x, ranking.y], [0, 0]);
+
+            if (dist2 < maxdist2 && dist2 != 0) {
+                maxdist2 = dist2;
+                nearestID = ranking.id;
             }
         }
+
+        client.send(encodeMessage({
+            c: CLIENTPACKET.COMMAND,
+            com: "spectate",
+            data: "" + nearestID
+        }));
     }
-
-    var avgx = 0.0;
-    var avgy = 0.0;
-
-    for (var idx in packet.rankings) {
-        var ranking = packet.rankings[idx];
-
-        avgx += ranking.x;
-        avgy += ranking.y;
-    }
-
-    avgx /= packet.rankings.length;
-    avgy /= packet.rankings.length;
-
-    var maxdist2 = 1e12;
-    var nearestID = 0;
-    for (var idx in packet.rankings) {
-        var ranking = packet.rankings[idx];
-
-        var dist2 = distance2([ranking.x, ranking.y], [0, 0]);
-
-        if (dist2 < maxdist2 && dist2 != 0) {
-            maxdist2 = dist2;
-            nearestID = ranking.id;
-        }
-    }
-
-    client.send(encodeMessage({
-        c: CLIENTPACKET.COMMAND,
-        com: "spectate",
-        data: "" + nearestID
-    }))
 
     for (var idx in packet.data) {
         var player = packet.data[idx];
@@ -606,6 +612,7 @@ function logPacket(packet) {
             break;
 
         case SERVERPACKET.GAME_SPECTATE:
+            isSpectating = true;
             Logger.debug("SPECTATE", { id: packet.id });
             break;
 
@@ -638,7 +645,7 @@ function logPacket(packet) {
         case SERVERPACKET.GAME_FLAG:
             processGameFlag(packet);
             break;
-        
+
         case SERVERPACKET.SCORE_BOARD:
             processScoreBoard(packet);
             break;
@@ -692,6 +699,8 @@ const onmessage = function (e) {
     }
 };
 const onopen = function () {
+    isSpectating = false;
+
     client.send(encodeMessage({
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
@@ -729,6 +738,7 @@ const onclose = function () {
     client.on('close', onclose);
     client.on('open', onopen);
     client.on('message', onmessage);
+    isSpectating = false;
 }
 
 client.on('open', onopen);
