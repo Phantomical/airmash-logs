@@ -221,3 +221,5 @@ class AirmashClient {
         this.callbacks.close(msg, code, reason);
     }
 }
+
+module.exports = AirmashClient;
