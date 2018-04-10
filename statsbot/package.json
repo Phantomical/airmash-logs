@@ -16,7 +16,7 @@
     "ws": "^5.1.1"
   },
   "scripts": {
-    "build": "browserify statsbot.js | babel -s inline --presets=env | uglifyjs -cm > statsbot.min.js",
+    "build": "browserify --node statsbot.js | babel -s inline --presets=env | uglifyjs -cm > statsbot.min.js",
     "lint": "jshint statsbot.js logger.js client.js",
     "prebuild": "npm run lint",
     "start": "node statsbot.js"
