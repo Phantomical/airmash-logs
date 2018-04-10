@@ -238,9 +238,9 @@ function processChatPublic(packet) {
         setTimeout(function () {
             var text = '';
             if (lastWinner === 2)
-                text = "The last game was won by red team. (in testing)";
+                text = "The last game was won by red team.";
             else if (lastWinner === 1)
-                text = "The last game was won by blue team. (in testing)";
+                text = "The last game was won by blue team.";
             else
                 text = MYNAME + " has been restarted since this game " +
                     "and does not know which team won the last game.";

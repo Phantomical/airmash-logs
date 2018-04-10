@@ -1,0 +1,3 @@
+﻿
+1. -team-counts
+   Gives a count of the number of players on each team
