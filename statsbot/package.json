@@ -10,13 +10,14 @@
   "dependencies": {
     "buffer-dataview": "0.0.2",
     "bufferutil": "^3.0.4",
+    "detect-node": "^2.0.3",
     "jsesc": "^2.5.1",
     "npm": "^5.8.0",
     "utf-8-validate": "^4.0.1",
     "ws": "^5.1.1"
   },
   "scripts": {
-    "build": "browserify statsbot.js | babel -s inline --presets=env | uglifyjs -cm > statsbot.min.js",
+    "build": "browserify --node statsbot.js | babel -s inline --presets=env | uglifyjs -cm > statsbot.min.js",
     "lint": "jshint statsbot.js logger.js client.js",
     "prebuild": "npm run lint",
     "start": "node statsbot.js"

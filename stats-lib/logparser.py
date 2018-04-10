@@ -181,10 +181,14 @@ def parse_entry(entry: str):
     
     return _fixup_packet(_parse_record(TokenList(tokens)))
 
-def parse_log(log: str):
+def parse_log(log):
     """Parses a log into a list of entries"""
 
-    for (i, line) in enumerate(log.splitlines()):
+    lines = log
+    if type(log) == str:
+        lines = log.splitlines()
+
+    for (i, line) in enumerate(lines):
         try:
             yield parse_entry(line)
         except ParseError as e:

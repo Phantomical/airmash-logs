@@ -1,13 +1,11 @@
 'use strict';
 
-const WebSocket = require('ws');
+const AirmashClient = require('./client');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
-const encodeMessage = GameAssets.encodeMessage;
-const decodeMessage = GameAssets.decodeMessage;
 const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
@@ -18,20 +16,19 @@ Logger.debug_info = true;
 var OWNER = "STEAMROLLER";
 var MYNAME = "STATSBOT";
 
-var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
-client.binaryType = 'arraybuffer';
+var client = new AirmashClient(
+    'wss://game-' + PlayHost + '.airma.sh/' + PlayPath, true, {
+        name: MYNAME,
+        horizonX: (1 << 16) - 1,
+        horizonY: (1 << 16) - 1
+    });
 
-var selfID = 0;
-var ownerID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
-var gameStart = new Date();
+var ownerID = 0;
 var lowChat = true;
-var isSpectating = false;
-var lastWinner = 0;
 
 function processLogin(packet) {
-    selfID = packet.id;
     Logger.log("LOGIN", {});
 
     for (var idx in packet.players) {
@@ -99,10 +96,6 @@ function processReteam(packet) {
             team: player.team
         });
     }
-
-    setTimeout(function () {
-        gameStart = new Date();
-    }, 30 * 1000);
 }
 function processDetailedScore(packet) {
     for (var idx in packet.scores) {
@@ -136,26 +129,26 @@ function processWhisper(packet) {
             var msPerMinute = 60 * 1000;
             var msPerHour = msPerMinute * 60;
 
-            var time = new Date() - gameStart;
+            var time = new Date() - client.gameStart;
             var text = '' + Math.floor(time / msPerHour) +
                 ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
                 ' minutes, and ' + (Math.floor(time / 1000) % 60) +
                 ' seconds have elapsed since this game started.';
 
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.from,
                 text: text
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() === "HELP" && !lowChat) {
         setTimeout(function () {
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.from,
                 text: "whisper commands: -game-time, -anon-me"
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() == "-ANON-ME") {
@@ -163,18 +156,18 @@ function processWhisper(packet) {
 
         if (!lowChat) {
             setTimeout(function () {
-                client.send(encodeMessage({
+                client.send({
                     c: CLIENTPACKET.WHISPER,
                     id: packet.from,
                     text: "You will now be anonymised from STATSBOT logs for this session."
-                }));
+                });
             }, 200);
             setTimeout(function () {
-                client.send(encodeMessage({
+                client.send({
                     c: CLIENTPACKET.WHISPER,
                     id: packet.from,
                     text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
-                }));
+                });
             }, 400);
         }
     }
@@ -191,29 +184,29 @@ function processWhisper(packet) {
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-SWAM-PING") {
         setTimeout(function () {
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "I'm using STARMASH, theme: " + MYNAME
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() === "-BOT-PING") {
         setTimeout(function () {
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "I am " + MYNAME + ", owner: " + OWNER
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() === "-PROW-PING") {
         setTimeout(function () {
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "STATSBOT cannot find prowlers for you :("
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() === '-GAME-TIME') {
@@ -221,33 +214,33 @@ function processChatPublic(packet) {
             var msPerMinute = 60 * 1000;
             var msPerHour = msPerMinute * 60;
 
-            var time = new Date() - gameStart;
+            var time = new Date() - client.gameStart;
             var text = '' + Math.floor(time / msPerHour) +
                 ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
                 ' minutes, and ' + (Math.floor(time / 1000) % 60) +
                 ' seconds have elapsed since this game started.';
 
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.CHAT,
                 text: text
-            }));
+            });
         }, 500);
     }
     else if (packet.text.toUpperCase() === '-LAST-WIN') {
         setTimeout(function () {
             var text = '';
-            if (lastWinner === 2)
-                text = "The last game was won by red team.";
-            else if (lastWinner === 1)
+            if (client.lastWinner === 1)
                 text = "The last game was won by blue team.";
+            else if (client.lastWinner === 2)
+                text = "The last game was won by red team.";
             else
                 text = MYNAME + " has been restarted since this game " +
                     "and does not know which team won the last game.";
 
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.CHAT,
                 text: text
-            }));
+            });
         }, 500);
     }
 
@@ -257,15 +250,14 @@ function processChatPublic(packet) {
     });
 }
 function processPlayerRespawn(packet) {
-    isSpectating = false;
-    if (packet.id == selfID) {
+    if (packet.id == client.id) {
         // Make statsbot spectate on new game   
         setTimeout(function () {
-            client.send(encodeMessage({
+            client.send({
                 c: CLIENTPACKET.COMMAND,
                 com: "spectate",
                 data: "-3"
-            }));
+            });
         }, 5 * 1000);
     }
 }
@@ -363,7 +355,7 @@ function processScoreBoard(packet) {
             (a[1] - b[1]) * (a[1] - b[1]);
     };
 
-    if (isSpectating) {
+    if (client.spectating) {
         let avgx = 0.0;
         let avgy = 0.0;
 
@@ -390,11 +382,11 @@ function processScoreBoard(packet) {
             }
         }
 
-        client.send(encodeMessage({
+        client.send({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "" + nearestID
-        }));
+        });
     }
 
     for (var idx in packet.data) {
@@ -409,7 +401,6 @@ function processScoreBoard(packet) {
 }
 function processServerCustom(packet) {
     var obj = JSON.parse(packet.data);
-    lastWinner = obj.w;
     Logger.log("GAME_WIN", {
         team: obj.w,
         bounty: obj.b
@@ -590,7 +581,6 @@ function logPacket(packet) {
             break;
 
         case SERVERPACKET.GAME_SPECTATE:
-            isSpectating = true;
             Logger.debug("SPECTATE", { id: packet.id });
             break;
 
@@ -660,66 +650,28 @@ function logPacket(packet) {
     }
 }
 
-const onmessage = function (e) {
-    var t = decodeMessage(e);
-
-    if (t.c == SERVERPACKET.PING) {
-        client.send(encodeMessage({
-            c: CLIENTPACKET.PONG,
-            num: t.num
-        }));
-    }
-    else if (t.c == SERVERPACKET.ERROR) {
+client.on('packet', function (t) {
+    if (t.c == SERVERPACKET.ERROR) {
         logError(t);
     }
     else {
         logPacket(t);
     }
-};
-const onopen = function () {
-    isSpectating = false;
-
-    client.send(encodeMessage({
-        c: CLIENTPACKET.LOGIN,
-        // This has to be 5 otherwise the server will send an error
-        protocol: 5,
-        name: "STATSBOT",
-        // This might be different for a signed-in player
-        // not sure what this does either
-        session: 'none',
-        // Expand view range of bot
-        horizonX: (1 << 16) - 1,
-        horizonY: (1 << 16) - 1,
-        flag: 'XX' // UN Flag
-    }));
-
+});
+client.on('open', function () {
     // Make statsbot spectate on joining    
     setTimeout(function () {
-        client.send(encodeMessage({
+        client.send({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "-3"
-        }));
+        });
     }, 1000);
 
     // Request a score board every 5s
     setInterval(function () {
-        client.send(encodeMessage({
+        client.send({
             c: CLIENTPACKET.SCOREDETAILED
-        }));
+        });
     }, 5 * 1000);
-};
-const onclose = function () {
-    client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
-    client.binaryType = 'arraybuffer';
-
-    client.on('close', onclose);
-    client.on('open', onopen);
-    client.on('message', onmessage);
-    isSpectating = false;
-};
-
-client.on('open', onopen);
-client.on('message', onmessage);
-client.on('close', onclose);
-
+});

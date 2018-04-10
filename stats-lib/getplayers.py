@@ -10,7 +10,7 @@ if len(sys.argv) < 2:
 players = dict()
 
 with open(sys.argv[1], 'r', errors='ignore') as file:
-    for entry in logparser.parse_log(file.read()):
+    for entry in logparser.parse_log(file):
         if entry['record_type'] == 'PLAYER_NEW':
             players[entry['id']] = entry['name']
 

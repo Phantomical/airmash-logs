@@ -44,9 +44,10 @@ class AirmashClient {
             open: function () { }
         };
 
-        this.ws.on("open", this.onopen);
-        this.ws.on("message", this.onmessage);
-        this.ws.on("close", this.onclose);
+        let me = this;
+        this.ws.on("open", function () { me.onopen(); });
+        this.ws.on("message", function (msg) { me.onmessage(msg); });
+        this.ws.on("close", function (a, b, c) { me.onclose(a, b, c); });
     }
 
     // Register a listener for a packet
@@ -130,6 +131,11 @@ class AirmashClient {
                 this.blueteam.push(player.id);
             }
         }
+
+        let me = this;
+        setTimeout(function () {
+            me.gameStart = new Date();
+        }, 30 * 1000);
     }
     _handlePlayerLevel(packet) {
         this.players[packet.id].level = packet.level;
@@ -143,7 +149,9 @@ class AirmashClient {
 
     _messageHandler(packet) {
         this.callbacks.packet(packet);
-        this.callbacks[packet.c](packet);
+        if (!!this.callbacks[packet.c]) {
+            this.callbacks[packet.c](packet);
+        }
 
         switch (packet.c) {
             case SERVERPACKET.GAME_SPECTATE:
@@ -213,9 +221,11 @@ class AirmashClient {
             this.ws = this.buildwsfn(this.serverURL);
             this.ws.binaryType = 'arraybuffer';
 
-            this.ws.on("open", this.onopen);
-            this.ws.on("message", this.onmessage);
-            this.ws.on("close", this.onclose);
+            let me = this;
+
+            this.ws.on("open", function () { me.onopen(); });
+            this.ws.on("message", function (msg) { me.onmessage(msg); });
+            this.ws.on("close", function (a, b, c) { me.onclose(a, b, c); });
         }
 
         this.callbacks.close(msg, code, reason);
