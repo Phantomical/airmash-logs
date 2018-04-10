@@ -3,7 +3,8 @@
 time_to_midnight=$(($(date -d 'tomorrow 08:00:00' +%s) - $(date +%s) + 1))
 filename=~/logs/statsbot-log-$(date +%F)
 
-echo $time_to_midnight
+rm -f statsbot.min.js
+wget https://ci.appveyor.com/airmash-logs/phantomical/artifacts/statsbot/statsbot.min.js -O statsbot.min.js
 
 timeout $time_to_midnight node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
