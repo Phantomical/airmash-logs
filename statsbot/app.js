@@ -238,9 +238,9 @@ function processChatPublic(packet) {
     else if (packet.text.toUpperCase() === '-LAST-WIN') {
         setTimeout(function () {
             var text = '';
-            if (lastWinner === 1)
+            if (lastWinner === 2)
                 text = "The last game was won by red team.";
-            else if (lastWinner === 2)
+            else if (lastWinner === 1)
                 text = "The last game was won by blue team.";
             else
                 text = "STATSBOT has been restarted since this game " +
