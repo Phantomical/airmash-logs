@@ -14,6 +14,7 @@ stats-lib/__pycache__/
 statsbot/node_modules/
 statsbot/.vs/
 statsbot/package-lock.json
+statsbot/statsbot.min.js
 
 balancebot/node_modules/
 balancebot/.vs/

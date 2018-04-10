@@ -3,7 +3,6 @@
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
-const genName = require('./namegen');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -16,7 +15,7 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
-var OWNER = "STEAMROLLER"
+var OWNER = "STEAMROLLER";
 var MYNAME = "STATSBOT";
 
 var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
@@ -147,7 +146,7 @@ function processWhisper(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.from,
                 text: text
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() === "HELP" && !lowChat) {
@@ -156,7 +155,7 @@ function processWhisper(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.from,
                 text: "whisper commands: -game-time, -anon-me"
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() == "-ANON-ME") {
@@ -168,14 +167,14 @@ function processWhisper(packet) {
                     c: CLIENTPACKET.WHISPER,
                     id: packet.from,
                     text: "You will now be anonymised from STATSBOT logs for this session."
-                }))
+                }));
             }, 200);
             setTimeout(function () {
                 client.send(encodeMessage({
                     c: CLIENTPACKET.WHISPER,
                     id: packet.from,
                     text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
-                }))
+                }));
             }, 400);
         }
     }
@@ -196,7 +195,7 @@ function processChatPublic(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "I'm using STARMASH, theme: " + MYNAME
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() === "-BOT-PING") {
@@ -205,7 +204,7 @@ function processChatPublic(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "I am " + MYNAME + ", owner: " + OWNER
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() === "-PROW-PING") {
@@ -214,7 +213,7 @@ function processChatPublic(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "STATSBOT cannot find prowlers for you :("
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() === '-GAME-TIME') {
@@ -231,7 +230,7 @@ function processChatPublic(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.CHAT,
                 text: text
-            }))
+            }));
         }, 500);
     }
     else if (packet.text.toUpperCase() === '-LAST-WIN') {
@@ -248,7 +247,7 @@ function processChatPublic(packet) {
             client.send(encodeMessage({
                 c: CLIENTPACKET.CHAT,
                 text: text
-            }))
+            }));
         }, 500);
     }
 
@@ -268,27 +267,6 @@ function processPlayerRespawn(packet) {
                 data: "-3"
             }));
         }, 5 * 1000);
-    }
-}
-function processServerMessage(packet) {
-    // do nothing for now
-    return;
-    const options = {
-        0: '<span class="info inline"><span class="red flag"></span></span>Taken by ',
-        1: '<span class="info inline"><span class="red flag"></span></span>Returned by ',
-        2: '<span class="info inline"><span class="red flag"></span></span>Captured by ',
-        3: '<span class="info inline"><span class="blue flag"></span></span>Taken by ',
-        4: '<span class="info inline"><span class="blue flag"></span></span>Returned by ',
-        5: '<span class="info inline"><span class="blue flag"></span></span>Captured by ',
-    };
-    var msg = {};
-
-    if (packet.message.startsWith(options[0])) {
-        msg = {
-            subject: "flag taken",
-            flag: 1,
-
-        }
     }
 }
 function processPlayerType(packet) {
@@ -383,14 +361,14 @@ function processScoreBoard(packet) {
     let distance2 = function (a, b) {
         return (a[0] - b[0]) * (a[0] - b[0]) +
             (a[1] - b[1]) * (a[1] - b[1]);
-    }
+    };
 
     if (isSpectating) {
-        var avgx = 0.0;
-        var avgy = 0.0;
+        let avgx = 0.0;
+        let avgy = 0.0;
 
-        for (var idx in packet.rankings) {
-            var ranking = packet.rankings[idx];
+        for (let idx in packet.rankings) {
+            let ranking = packet.rankings[idx];
 
             avgx += ranking.x;
             avgy += ranking.y;
@@ -399,12 +377,12 @@ function processScoreBoard(packet) {
         avgx /= packet.rankings.length;
         avgy /= packet.rankings.length;
 
-        var maxdist2 = 1e12;
-        var nearestID = 0;
-        for (var idx in packet.rankings) {
-            var ranking = packet.rankings[idx];
+        let maxdist2 = 1e12;
+        let nearestID = 0;
+        for (let idx in packet.rankings) {
+            let ranking = packet.rankings[idx];
 
-            var dist2 = distance2([ranking.x, ranking.y], [0, 0]);
+            let dist2 = distance2([ranking.x, ranking.y], [0, 0]);
 
             if (dist2 < maxdist2 && dist2 != 0) {
                 maxdist2 = dist2;
@@ -705,7 +683,7 @@ const onopen = function () {
         c: CLIENTPACKET.LOGIN,
         // This has to be 5 otherwise the server will send an error
         protocol: 5,
-        name: "STATSBOT",// genName(),
+        name: "STATSBOT",
         // This might be different for a signed-in player
         // not sure what this does either
         session: 'none',
@@ -739,7 +717,7 @@ const onclose = function () {
     client.on('open', onopen);
     client.on('message', onmessage);
     isSpectating = false;
-}
+};
 
 client.on('open', onopen);
 client.on('message', onmessage);

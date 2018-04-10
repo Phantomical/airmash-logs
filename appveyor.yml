@@ -1,0 +1,20 @@
+
+environment:
+    nodejs_version: "6"
+    
+install:
+    - ps: Install-Product node $env:nodejs_version
+    - cd statsbot
+    - npm install
+    - cd ..
+    
+# Install our own version of node, so this isn't important
+image: Visual Studio 2015
+
+build_script:
+    - cd statsbot
+    - npm run build
+    - cd ..
+    
+artifacts:
+    - path: statsbot/statsbot.min.js

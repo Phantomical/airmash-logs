@@ -1,7 +1,7 @@
 {
   "name": "airmash-stat-bot",
   "version": "0.0.0",
-  "description": "NodejsConsoleApp1",
+  "description": "statsbot",
   "main": "app.js",
   "author": {
     "name": "STEAMROLLER"
@@ -9,8 +9,27 @@
   "license": "MIT",
   "dependencies": {
     "buffer-dataview": "0.0.2",
+    "bufferutil": "^3.0.4",
     "jsesc": "^2.5.1",
     "npm": "^5.8.0",
-    "ws": "^5.1.0"
+    "utf-8-validate": "^4.0.1",
+    "ws": "^5.1.1"
+  },
+  "scripts": {
+    "build": "browserify statsbot.js | babel -s inline --presets=env | uglifyjs -cm > statsbot.min.js",
+    "lint": "jshint statsbot.js logger.js client.js",
+    "prebuild": "npm run lint",
+    "start": "node statsbot.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "browserify": "^16.1.1",
+    "jshint": "^2.9.5",
+    "uglify-js": "^3.3.20"
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "node": true
   }
 }

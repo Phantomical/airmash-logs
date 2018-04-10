@@ -5,7 +5,7 @@ filename=~/logs/statsbot-log-$(date +%F)
 
 echo $time_to_midnight
 
-timeout $time_to_midnight node app.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
+timeout $time_to_midnight node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
 exitval=$?
 
@@ -23,7 +23,6 @@ rm ~/logs/stats-lib.tar.gz
 tar czf ~/logs/stats-lib.tar.gz ~/airmash-logs/stats-lib
 
 git pull
-npm install
 
 sleep 5
 
