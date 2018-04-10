@@ -103,7 +103,6 @@ function processReteam(packet) {
 
     setTimeout(function () {
         gameStart = new Date();
-        console.error("Reset game time")
     }, 30 * 1000);
 }
 function processDetailedScore(packet) {
@@ -239,9 +238,9 @@ function processChatPublic(packet) {
         setTimeout(function () {
             var text = '';
             if (lastWinner === 2)
-                text = "The last game was won by red team.";
+                text = "The last game was won by red team. (in testing)";
             else if (lastWinner === 1)
-                text = "The last game was won by blue team.";
+                text = "The last game was won by blue team. (in testing)";
             else
                 text = MYNAME + " has been restarted since this game " +
                     "and does not know which team won the last game.";
