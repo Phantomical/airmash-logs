@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6b5e21c1-e474-47db-9161-169b6c2042c9</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>app.js</StartupFile>
+    <StartupFile>statsbot.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -34,20 +34,23 @@
     <Compile Include="airmash.js">
       <Publish>False</Publish>
     </Compile>
-    <Compile Include="app.js" />
+    <Compile Include="statsbot.js" />
+    <Compile Include="client.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="gamecode.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="logger.js">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="namegen.js">
-      <SubType>Code</SubType>
-    </Compile>
     <Content Include=".dockerignore">
       <SubType>Code</SubType>
     </Content>
     <Content Include="botrun" />
+    <Content Include="command-ideas.txt">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="Dockerfile" />
     <Content Include="package.json" />
   </ItemGroup>
