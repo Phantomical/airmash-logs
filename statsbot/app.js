@@ -712,7 +712,7 @@ const onopen = function () {
         // Expand view range of bot
         horizonX: (1 << 16) - 1,
         horizonY: (1 << 16) - 1,
-        flag: 'us'
+        flag: 'XX' // UN Flag
     }));
 
     // Make statsbot spectate on joining    
