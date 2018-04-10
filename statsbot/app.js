@@ -243,7 +243,7 @@ function processChatPublic(packet) {
             else if (lastWinner === 1)
                 text = "The last game was won by blue team.";
             else
-                text = "STATSBOT has been restarted since this game " +
+                text = MYNAME + " has been restarted since this game " +
                     "and does not know which team won the last game.";
 
             client.send(encodeMessage({
