@@ -16,7 +16,8 @@ build_script:
     - npm run build
     - cd ..
     - tar czf stats-lib.tar.gz stats-lib
+    - cat statsbot/statsbot.min.js | gzip --best > statsbot.min.js.gz
     
 artifacts:
-    - path: statsbot/statsbot.min.js
+    - path: statsbot.min.js.gz
     - path: stats-lib.tar.gz
