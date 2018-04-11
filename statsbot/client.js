@@ -151,7 +151,9 @@ class AirmashClient {
         this.players[packet.id].flag = packet.flag;
     }
     _handlePlayerRespawn(packet) {
-        this.spectating = false;
+        if (packet.id === this.id) {
+            this.spectating = false;
+        }
     }
 
     _messageHandler(packet) {
