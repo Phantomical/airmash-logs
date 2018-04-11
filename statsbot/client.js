@@ -151,8 +151,8 @@ class AirmashClient {
 
         let me = this;
         setTimeout(function () {
-            this.gameStart = new Date();
-        }, 31 * 1000);
+            me.gameStart = new Date();
+        }, 30 * 1000);
     }
 
     _messageHandler(packet) {
