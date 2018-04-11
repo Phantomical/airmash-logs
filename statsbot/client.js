@@ -9,7 +9,7 @@ const encodeMessage = GameAssets.encodeMessage;
 const decodeMessage = GameAssets.decodeMessage;
 
 class AirmashClient {
-    constructor(serverURL, restartOnDc, botInfo, buildwsfn) {
+    constructor(serverURL, restartOnDc, botInfo, buildwsfn, decode) {
         if (!buildwsfn) {
             buildwsfn = function (url) {
                 return new WebSocket(serverURL);
@@ -28,6 +28,7 @@ class AirmashClient {
         this.restartOnDc = restartOnDc;
         this.serverURL = serverURL;
         this.buildwsfn = buildwsfn;
+        this.decode = !!decode;
 
         this.players = {};
         this.redteam = [];
@@ -57,7 +58,10 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
-        this.ws.send(encodeMessage(packet));
+        if (this.decode)
+            this.ws.send(encodeMessage(packet));
+        else
+            this.ws.send(packet);
     }
 
     _handleLogin(packet) {
@@ -160,9 +164,6 @@ class AirmashClient {
             case SERVERPACKET.GAME_SPECTATE:
                 this.spectating = true;
                 break;
-            case SERVERPACKET.PLAYER_RESPAWN:
-                this._handlePlayerRespawn(packet);
-                break;
             case SERVERPACKET.SERVER_CUSTOM:
                 this.lastWinner = JSON.parse(packet.data).w;
                 break;
@@ -184,13 +185,19 @@ class AirmashClient {
             case SERVERPACKET.PLAYER_FLAG:
                 this._handlePlayerFlag(packet);
                 break;
+            case SERVERPACKET.PLAYER_RETEAM:
+                this._handleReteam(packet);
+                break;
+            case SERVERPACKET.PLAYER_RESPAWN:
+                this._handlePlayerRespawn(packet);
+                break;
         }
     }
 
     onopen() {
         let info = this.info;
 
-        this.ws.send(encodeMessage({
+        this.send({
             c: CLIENTPACKET.LOGIN,
             // Current server protocol version, must be 5
             protocol: 5,
@@ -202,12 +209,14 @@ class AirmashClient {
             horizonY: !!info.horizonY ? info.horizonY : 1000,
             // Flag of bot, default is UN flag
             flag: !!info.flag ? info.flag : 'XX'
-        }));
+        });
 
         this.callbacks.open();
     }
     onmessage(msg) {
-        var packet = decodeMessage(msg);
+        var packet = msg;
+        if (this.decode)
+            packet = decodeMessage(msg);
 
         if (packet.c === SERVERPACKET.PING) {
             this.send({

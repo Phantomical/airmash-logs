@@ -14,7 +14,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6b5e21c1-e474-47db-9161-169b6c2042c9</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>statsbot.js</StartupFile>
+    <StartupFile>tests\game-time.test.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
@@ -34,6 +34,7 @@
     <Compile Include="airmash.js">
       <Publish>False</Publish>
     </Compile>
+    <Compile Include="tests\game-time.test.js" />
     <Compile Include="statsbot.js" />
     <Compile Include="client.js">
       <SubType>Code</SubType>
@@ -53,6 +54,9 @@
     </Content>
     <Content Include="Dockerfile" />
     <Content Include="package.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tests\" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
