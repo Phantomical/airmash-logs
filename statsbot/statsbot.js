@@ -260,7 +260,7 @@ function processChatPublic(packet) {
                 c: CLIENTPACKET.CHAT,
                 text: text
             });
-        })
+        });
     }
 
     Logger.log("CHAT_PUBLIC", {
