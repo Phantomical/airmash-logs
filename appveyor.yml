@@ -5,9 +5,9 @@ environment:
 install:
     - ps: Install-Product node $env:nodejs_version
     - cd statsbot
-    - npm install --depth 0 --loglevel warn
+    - npm install --depth 0 --quiet
     - cd ../balancebot
-    - npm install --depth 0 --loglevel warn
+    - npm install --depth 0 --quiet
     - cd ..
     
 # Install our own version of node, so this isn't important
