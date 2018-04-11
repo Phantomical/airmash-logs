@@ -254,7 +254,7 @@ function processChatPublic(packet) {
     else if (packet.text.toUpperCase() === '-GAME-TEAMS') {
         setTimeout(function () {
             var text = "Red team: " + client.redteam.length + ", " +
-                "Blue team: " + client.blueteam.length + " (in testing);
+                "Blue team: " + client.blueteam.length + " (in testing)";
 
             client.send({
                 c: CLIENTPACKET.CHAT,
