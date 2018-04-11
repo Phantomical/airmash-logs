@@ -48,12 +48,12 @@ function startBots(numbots) {
 }
 function removeUnneeded(req_red, req_blue) {
     if (req_blue === undefined) {
-        if (req_red <= 0) return remove_unneeded(0, -req_red);
-        return remove_unneeded(req_red, 0);
+        if (req_red <= 0) return removeUnneeded(0, -req_red);
+        return removeUnneeded(req_red, 0);
     }
 
-    redcnt = 0;
-    bluecnt = 0;
+    var redcnt = 0;
+    var bluecnt = 0;
 
     for (var i = 0; i < bots.length; ++i) {
         if (bots[i].myTeam === REDTEAM) {
@@ -97,7 +97,7 @@ function balance() {
     }).length;
 
     setTimeout(function () {
-        removeUnneeded(botdiff);
+        removeUnneeded(redbots - bluebots);
     }, 1 * 1000);
 
     if (balancebots.length === 0) {
@@ -126,7 +126,7 @@ class BalanceBot {
     }
 
     onopen() {
-        ws.send(encodeMessage({
+        this.ws.send(encodeMessage({
             c: CLIENTPACKET.LOGIN,
             // This has to be 5 otherwise the server will send an error
             protocol: 5,
@@ -156,8 +156,8 @@ class BalanceBot {
                 teams = [[], []];
                 bots = [];
 
-                for (var idx in packet.players) {
-                    var player = packet.players[idx];
+                for (let idx in packet.players) {
+                    let player = packet.players[idx];
 
                     teams[player.team - 1].push(player.id);
 
@@ -171,15 +171,15 @@ class BalanceBot {
             if (this.am_operator) {
                 teams[packet.team - 1] = packet.id;
 
-                if (isKnownBot(player.name)) {
+                if (isKnownBot(packet.name)) {
                     bots.add(packet.id);
                 }
             }
         }
         else if (packet.c === SERVERPACKET.PLAYER_LEAVE) {
             if (this.am_operator) {
-                var redidx = teams[0].indexOf(packet.id);
-                var blueidx = teams[1].indexOf(packet.id);
+                let redidx = teams[0].indexOf(packet.id);
+                let blueidx = teams[1].indexOf(packet.id);
 
                 if (redidx > -1) {
                     teams[0].splice(redidx);
@@ -188,7 +188,7 @@ class BalanceBot {
                     teams[1].splice(blueidx);
                 }
 
-                var botidx = bots.indexOf(packet.id);
+                let botidx = bots.indexOf(packet.id);
 
                 if (botidx > -1) {
                     bots.splice(packet.id);
@@ -203,13 +203,13 @@ class BalanceBot {
             }
         }
         else if (packet.c === SERVERPACKET.SERVER_CUSTOM) {
-            this.close()
+            this.close();
 
-            balancebots = []
+            balancebots = [];
 
             // Leave until after reteam
             setTimeout(function () {
-                var bot = new BalanceBot(true);
+                let bot = new BalanceBot(true);
                 balancebots.push(bot);
 
                 bot.balance();
@@ -223,24 +223,12 @@ class BalanceBot {
                     text: "I am " + MYNAME + " . My purpose is to " +
                         "ensure there are the same number of bots " +
                         "on each team. Owner: " + OWNER
-                }))
+                }));
             }
         }
     }
     onclose() {
 
-    }
-}
-
-function processChatPublic(packet) {
-    if (packet.text.toUpperCase() === "-BOT-PING") {
-        setTimeout(function () {
-            client.send(encodeMessage({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.id,
-                text: "I am " + MYNAME + ", my purpose is to log all server packets. Owner: " + OWNER
-            }))
-        }, 500);
     }
 }
 
@@ -348,59 +336,4 @@ function logError(packet) {
 
     console.log(JSON.stringify(obj));
 }
-
-const onmessage = function (e) {
-    var t = decodeMessage(e);
-
-    if (t.c == SERVERPACKET.PING) {
-        client.send(encodeMessage({
-            c: CLIENTPACKET.PONG,
-            num: t.num
-        }));
-    }
-    else if (t.c == SERVERPACKET.ERROR) {
-        logError(t);
-    }
-    else {
-        logPacket(t);
-    }
-};
-const onopen = function () {
-    client.send(encodeMessage({
-        c: CLIENTPACKET.LOGIN,
-        // This has to be 5 otherwise the server will send an error
-        protocol: 5,
-        name: MYNAME,
-        // Login token for a signed-in player
-        session: 'none',
-        // Expand view range of bot
-        horizonX: (1 << 16) - 1,
-        horizonY: (1 << 16) - 1,
-        flag: 'ca'
-    }));
-
-    // Make statsbot spectate on joining    
-    setTimeout(function () {
-        client.send(encodeMessage({
-            c: CLIENTPACKET.COMMAND,
-            com: "spectate",
-            data: "-3"
-        }));
-    }, 1000);
-};
-const onclose = function () {
-    client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
-    client.binaryType = 'arraybuffer';
-
-    client.on('close', onclose);
-    client.on('open', onopen);
-    client.on('message', onmessage);
-}
-
-client.on('open', onopen);
-client.on('message', onmessage);
-client.on('close', onclose);
-
-
-
 

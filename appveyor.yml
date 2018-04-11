@@ -16,10 +16,14 @@ image: Visual Studio 2015
 build_script:
     - cd statsbot
     - npm run build
+    - cd ../balancebot
+    - npm run build
     - cd ..
     - tar czf stats-lib.tar.gz stats-lib
     - cat statsbot/statsbot.min.js | gzip --best > statsbot.min.js.gz
+    - cat balancebot/balancebot.min.js | gzip --best > balancebot.min.js.gz
     
 artifacts:
     - path: statsbot.min.js.gz
+    - path: balancebot.min.js.gz
     - path: stats-lib.tar.gz

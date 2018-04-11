@@ -9,8 +9,10 @@
   "license": "MIT",
   "dependencies": {
     "buffer-dataview": "0.0.2",
+    "bufferutil": "^3.0.4",
     "jsesc": "^2.5.1",
     "npm": "^5.8.0",
+    "utf-8-validate": "^4.0.1",
     "ws": "^5.1.0"
   },
   "devDependencies": {
