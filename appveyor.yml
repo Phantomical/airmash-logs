@@ -19,3 +19,4 @@ build_script:
     
 artifacts:
     - path: statsbot/statsbot.min.js
+    - path: stats-lib.tar.gz
