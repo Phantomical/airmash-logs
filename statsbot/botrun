@@ -4,7 +4,7 @@ time_to_midnight=$(($(date -d 'tomorrow 08:00:00' +%s) - $(date +%s) + 1))
 filename=~/logs/statsbot-log-$(date +%F)
 
 rm -f statsbot.min.js
-wget https://ci.appveyor.com/api/projects/phantomical/airmash-logs/artifacts/statsbot/statsbot.min.js.gz?branch=master -O statsbot.min.js.gz
+wget https://ci.appveyor.com/api/projects/phantomical/airmash-logs/artifacts/statsbot.min.js.gz?branch=master -O statsbot.min.js.gz
 gunzip statsbot.min.js.gz
 
 timeout $time_to_midnight node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
