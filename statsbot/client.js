@@ -9,7 +9,7 @@ const encodeMessage = GameAssets.encodeMessage;
 const decodeMessage = GameAssets.decodeMessage;
 
 class AirmashClient {
-    constructor(serverURL, restartOnDc, botInfo, buildwsfn, decode) {
+    constructor(serverURL, restartOnDc, botInfo, buildwsfn, noDecode) {
         if (!buildwsfn) {
             buildwsfn = function (url) {
                 return new WebSocket(serverURL);
@@ -28,7 +28,7 @@ class AirmashClient {
         this.restartOnDc = restartOnDc;
         this.serverURL = serverURL;
         this.buildwsfn = buildwsfn;
-        this.decode = !!decode;
+        this.decode = !!noDecode;
 
         this.players = {};
         this.redteam = [];
@@ -58,7 +58,7 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
-        if (this.decode)
+        if (!this.noDecode)
             this.ws.send(encodeMessage(packet));
         else
             this.ws.send(packet);
@@ -215,7 +215,7 @@ class AirmashClient {
     }
     onmessage(msg) {
         var packet = msg;
-        if (this.decode)
+        if (!this.noDecode)
             packet = decodeMessage(msg);
 
         if (packet.c === SERVERPACKET.PING) {

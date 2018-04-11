@@ -87,6 +87,6 @@ client = new AirmashClient('', false,
     { name: 'STATSBOT', owner: '' },
     function () {
         return ws;
-    }, false);
+    }, true);
 
 ws.runtest();
