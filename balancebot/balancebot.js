@@ -12,8 +12,8 @@ const playPath = GameAssets.playPath;
 
 const hostURL = 'wss://game-' + playHost + '.airma.sh/' + playPath;
 
-const OWNER = "STEAMROLLER"
-const MYNAME = "BALANCEBOT"
+const OWNER = "STEAMROLLER";
+const MYNAME = "BALANCEBOT";
 // This shouldn't be set above 8
 const MAXBOTS = 4;
 
@@ -195,7 +195,7 @@ class BalanceBot {
 
                     for (var i = balancebots.length; i >= 0; ++i) {
                         if (balancebots[i].team == packet.team) {
-                            balancebots[i].close()
+                            balancebots[i].close();
                             balancebots.splice(i);
                         }
                     }
