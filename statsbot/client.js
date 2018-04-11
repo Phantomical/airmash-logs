@@ -148,11 +148,6 @@ class AirmashClient {
     }
     _handlePlayerRespawn(packet) {
         this.spectating = false;
-
-        let me = this;
-        setTimeout(function () {
-            me.gameStart = new Date();
-        }, 30 * 1000);
     }
 
     _messageHandler(packet) {
