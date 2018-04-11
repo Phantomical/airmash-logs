@@ -33,7 +33,7 @@ const sendWhisper = throttle(function (msg, dest) {
     client.send({
         c: CLIENTPACKET.WHISPER,
 
-    })
+    });
 }, 2000);
 
 function processLogin(packet) {
