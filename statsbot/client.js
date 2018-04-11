@@ -29,6 +29,7 @@ class AirmashClient {
         this.serverURL = serverURL;
         this.buildwsfn = buildwsfn;
         this.decode = !!noDecode;
+        this.open = false;
 
         this.players = {};
         this.redteam = [];
@@ -58,6 +59,9 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
+        if (!this.open)
+            return;
+
         if (!this.noDecode)
             this.ws.send(encodeMessage(packet));
         else
@@ -198,6 +202,7 @@ class AirmashClient {
 
     onopen() {
         let info = this.info;
+        this.open = true;
 
         this.send({
             c: CLIENTPACKET.LOGIN,
@@ -231,6 +236,8 @@ class AirmashClient {
         }
     }
     onclose(msg, code, reason) {
+        this.open = false;
+
         if (this.restartOnDc) {
             this.ws = this.buildwsfn(this.serverURL);
             this.ws.binaryType = 'arraybuffer';
