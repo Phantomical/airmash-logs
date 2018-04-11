@@ -251,6 +251,17 @@ function processChatPublic(packet) {
             });
         }, 500);
     }
+    else if (packet.text.toUpperCase() === '-GAME-TEAMS') {
+        setTimeout(function () {
+            var text = "Red team: " + client.redteam.length + ", " +
+                "Blue team: " + client.blueteam.length;
+
+            client.send({
+                c: CLIENTPACKET.CHAT,
+                text: text
+            });
+        })
+    }
 
     Logger.log("CHAT_PUBLIC", {
         id: packet.id,
