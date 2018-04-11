@@ -146,6 +146,14 @@ class AirmashClient {
     _handlePlayerFlag(packet) {
         this.players[packet.id].flag = packet.flag;
     }
+    _handlePlayerRespawn(packet) {
+        this.spectating = false;
+
+        let me = this;
+        setTimeout(function () {
+            this.gameStart = new Date();
+        }, 31 * 1000);
+    }
 
     _messageHandler(packet) {
         this.callbacks.packet(packet);
@@ -158,7 +166,7 @@ class AirmashClient {
                 this.spectating = true;
                 break;
             case SERVERPACKET.PLAYER_RESPAWN:
-                this.spectating = false;
+                this._handlePlayerRespawn(packet);
                 break;
             case SERVERPACKET.SERVER_CUSTOM:
                 this.lastWinner = JSON.parse(packet.data).w;

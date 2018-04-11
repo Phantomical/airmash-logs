@@ -20,6 +20,9 @@ with open(sys.argv[1], 'r', errors='ignore') as file:
                 'hit': 0
             }
         elif entry['record_type'] == 'PLAYER_LEAVE':
+            if not entry['id'] in players:
+                continue
+
             name = players[entry['id']]['name']
             if name in logs:
                 logs[name]['hit']   += players[entry['id']]['hit']

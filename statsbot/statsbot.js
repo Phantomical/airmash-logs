@@ -3,6 +3,7 @@
 const AirmashClient = require('./client');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
+const throttle = require('lodash.throttle');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -27,6 +28,13 @@ var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
 var lowChat = true;
+
+const sendWhisper = throttle(function (msg, dest) {
+    client.send({
+        c: CLIENTPACKET.WHISPER,
+
+    })
+}, 2000);
 
 function processLogin(packet) {
     Logger.log("LOGIN", {});
