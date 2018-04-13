@@ -59,6 +59,7 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
+        // TODO: Retry after a timeout?
         if (!this.open)
             return;
 
@@ -116,8 +117,8 @@ class AirmashClient {
         let redidx = this.redteam.indexOf(packet.id);
         let bluidx = this.blueteam.indexOf(packet.id);
 
-        this.redteam.splice(redidx);
-        this.blueteam.splice(bluidx);
+        this.redteam.splice(redidx, 1);
+        this.blueteam.splice(bluidx, 1);
 
         delete this.players[packet.id];
     }
