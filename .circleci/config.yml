@@ -31,13 +31,13 @@ jobs:
                     cd ~/repo/stats-lib-rs
                     rustup run stable cargo test
                     
-#    node_build:
-#        working_directory: ~/repo
-#        docker:
-#            - image: circleci/node:6.11-stretch
-#            
-#        steps:
-#            - checkout
+    node_build:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/node:6.11-stretch
+            
+        steps:
+            - checkout
 #            - run:
 #                command: |
 #                    cd ~/repo/statsbot
