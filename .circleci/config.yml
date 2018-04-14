@@ -38,21 +38,21 @@ jobs:
             
         steps:
             - checkout
-#            - run:
-#                command: |
-#                    cd ~/repo/statsbot
-#                    npm install --depth 0
-#                    npm run build
-#                    gzip statsbot.min.js --best
-#            - run:
-#                command: |
-#                    cd ~/repo/balancebot
-#                    npm install --depth 0
-#                    npm run build
-#                    gzip balancebot.min.js --best
-#            - run: 
-#                command: |
-#                    tar czf stats-lib.tar.gz stats-lib
+            - run:
+                command: |
+                    cd ~/repo/statsbot
+                    npm install --depth 0
+                    npm run build
+                    gzip statsbot.min.js --best
+            - run:
+                command: |
+                    cd ~/repo/balancebot
+                    npm install --depth 0
+                    npm run build
+                    gzip balancebot.min.js --best
+            - run: 
+                command: |
+                    tar czf stats-lib.tar.gz stats-lib
 #                    
 #            - store_artifacts:
 #                path: ~/repo/statsbot/statsbot.min.js.gz
