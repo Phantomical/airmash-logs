@@ -58,7 +58,7 @@ jobs:
                 path: ~/repo/statsbot/statsbot.min.js.gz
                 destination: /statsbot.min.js.gz
             - store_artifacts:
-                path: ~/repo/balancebot/balancebot.min.jz.gz
+                path: ~/repo/balancebot/balancebot.min.js.gz
                 destination: /balancebot.min.js.gz
             - store_artifacts:
                 path: ~/repo/stats-lib.tar.gz
