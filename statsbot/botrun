@@ -7,6 +7,10 @@ rm -f statsbot.min.js
 wget https://ci.appveyor.com/api/projects/phantomical/airmash-logs/artifacts/statsbot.min.js.gz?branch=master -O statsbot.min.js.gz
 gunzip statsbot.min.js.gz
 
+circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
+path=$(curl -s https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/latest/artifacts?circle-token=$circleci_token | grep -o 'https://[^"]*')
+curl -s $path > anonymise
+
 timeout $cutoff_time node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
 exitval=$?
@@ -18,7 +22,7 @@ while [ -e $filename-$ctr.gz ]; do
 done
 
 if [ -s ~/statsbot-log ]; then
-	python3 ../stats-lib/anonymize.py ~/statsbot-log | gzip > $filename-$ctr.gz
+	./anonymise ~/statsbot-log | gzip > $filename-$ctr.gz
 fi
 
 rm ~/logs/stats-lib.tar.gz
