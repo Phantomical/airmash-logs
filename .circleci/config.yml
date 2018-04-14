@@ -119,7 +119,7 @@ jobs:
                     tar czf statsbot.tar.gz workspace
                 
             - store_artifacts:
-                path: statsbot.tar.gz
+                path: ~/statsbot.tar.gz
                 destination: statsbot.tar.gz
                 
 workflows:
