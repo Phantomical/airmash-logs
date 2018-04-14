@@ -3,8 +3,7 @@ environment:
     nodejs_version: "6"
     
 install:
-    # Setup rust to cross-compile for 64bit linux
-    - curl https://win.rustup.rs/x86_64 -o rustup-init.exe
+    - curl https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe -o rustup-init.exe
     - rustup-init -y --default-toolchain stable --default-host x86_64-pc-windows-gnu
     - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
     - rustc -vV
