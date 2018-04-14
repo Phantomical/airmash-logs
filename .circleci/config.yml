@@ -48,13 +48,12 @@ jobs:
                     cd ~/repo/statsbot
                     npm install --depth 0
                     npm run build
-                    gzip statsbot.min.js --best
-                    mv statsbot.min.js.gz ~/workspace/statsbot.min.js.gz
+                    mv statsbot.min.js ~/workspace/statsbot.min.js
                     
             - persist_to_workspace:
                 root: ~/workspace
                 paths:
-                    - statsbot.min.js.gz 
+                    - statsbot.min.js
                     
     balancebot_build:
         working_directory: ~/repo
@@ -70,13 +69,12 @@ jobs:
                     cd ~/repo/balancebot
                     npm install --depth 0
                     npm run build
-                    gzip balancebot.min.js --best
-                    mv balancebot.min.js.gz ~/workspace/balancebot.min.js.gz
+                    mv balancebot.min.js ~/workspace/balancebot.min.js
                     
             - persist_to_workspace:
                 root: ~/workspace
                 paths:
-                    - balancebot.min.js.gz  
+                    - balancebot.min.js
                     
     stats_lib_build:
         working_directory: ~/repo
