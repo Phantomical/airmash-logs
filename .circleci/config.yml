@@ -114,7 +114,8 @@ jobs:
             - run:
                 command: |
                     cd ~
-                    tar czf statsbot.tar.gz workspace
+                    mv workspace statsbot
+                    tar czf statsbot.tar.gz statsbot
                 
             - store_artifacts:
                 path: ~/statsbot.tar.gz
