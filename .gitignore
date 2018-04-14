@@ -19,3 +19,7 @@ statsbot/statsbot.min.js
 balancebot/node_modules/
 balancebot/.vs/
 balancebot/package-lock.json
+
+stats-lib-rs/.vs/
+stats-lib-rs/target/
+stats-lib-rs/Cargo.lock

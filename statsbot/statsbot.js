@@ -692,5 +692,5 @@ client.on('open', function () {
         client.send({
             c: CLIENTPACKET.SCOREDETAILED
         });
-    }, 5 * 1000);
+    }, 30 * 1000);
 });

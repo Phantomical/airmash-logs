@@ -1,3 +1,6 @@
 ﻿
 1. -team-counts
    Gives a count of the number of players on each team
+2. -timer-enable/-timer-disable
+   Keeps shield timings for both teams and displays them
+   in global chat.
