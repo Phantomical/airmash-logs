@@ -4,7 +4,7 @@ environment:
     
 install:
     # Setup rust to cross-compile for 64bit linux
-    - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
+    - curl https://win.rustup.rs/ -o rustup-init.exe
     - rustup-init -y --default-toolchain stable --default-host x86_64-pc-windows-gnu
     - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
     - rustc -vV
