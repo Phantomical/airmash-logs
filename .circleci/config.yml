@@ -5,29 +5,18 @@
 version: 2
 jobs:
     build:
+        working_directory: ~/repo
+    
         docker:
             - image: abronan/rust-circleci:latest
-      
-    working_directory: ~/repo
+        steps:
+            - checkout
+            - run:
+                command: |
+                    cd ~/repo/stats-lib-rs
+                    rustup run stable cargo build --release
+            - store_artifacts:
+                path: ~/repo/stats-lib-rs/target/release/anonymise
+                destination: /artifacts
 
-    steps:
-        - checkout
-
-        - restore_cache:
-            key: project-cache
-      
-        - run:
-            command: |
-                cd ~/repo/stats-lib-rs
-                rustup run stable cargo build --release
-          
-        - store_artifacts:
-            path: ~/repo/stats-lib-rs/target/release/anonymise
-            destination: /artifacts
-      
-        - save_cache:
-            key: project-cache
-            paths:
-                - "~/.cargo"
-                - "./target"
 
