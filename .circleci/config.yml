@@ -15,9 +15,11 @@ jobs:
                 command: |
                     cd ~/repo/stats-lib-rs
                     rustup run stable cargo build --release
-            - store_artifacts:
-                path: ~/repo/stats-lib-rs/target/release/anonymise
-                destination: /anonymise
+                    mv ~/repo/stats-lib-rs/target/release/anonymise ~/workspace/anonymise
+            - persisty_to_workspace:
+                root: ~/workspace
+                paths:
+                    - anonymise
 
     test:
         working_directory: ~/repo
@@ -44,25 +46,46 @@ jobs:
                     npm install --depth 0
                     npm run build
                     gzip statsbot.min.js --best
+                    mv statsbot.min.js.gz ~/workspace/statsbot.min.js.gz
             - run:
                 command: |
                     cd ~/repo/balancebot
                     npm install --depth 0
                     npm run build
                     gzip balancebot.min.js --best
+                    mv balancebot.min.js.gz ~/workspace/balancebot.min.js.gz
             - run: 
                 command: |
                     tar czf stats-lib.tar.gz stats-lib
+                    mv stats-lib.tar.gz ~/workspace/stats-lib.tar.gz
                     
+            - persist_to_workspace:
+                root: ~/workspace
+                paths:
+                    - statsbot.min.js.gz
+                    - balancebot.min.js.gz
+                    - stats-lib.tar.gz
+    deploy:
+        working_directory: ~/repo
+        docker:
+            - image: ubuntu:16.04
+            
+        steps: 
+            - attach_workspace:
+                at: ~/workspace
+                
             - store_artifacts:
-                path: ~/repo/statsbot/statsbot.min.js.gz
+                path: ~/workspace/statsbot.min.js.gz
                 destination: /statsbot.min.js.gz
             - store_artifacts:
-                path: ~/repo/balancebot/balancebot.min.js.gz
+                path: ~/workspace/balancebot.min.js.gz
                 destination: /balancebot.min.js.gz
             - store_artifacts:
-                path: ~/repo/stats-lib.tar.gz
+                path: ~/workspace/stats-lib.tar.gz
                 destination: /stats-lib.tar.gz
+            - store_artifacts:
+                path: ~/workspace/anonymise
+                destination: /anonymise
                     
 workflows:
     version: 2
@@ -71,3 +94,8 @@ workflows:
             - build
             - test
             - node_build
+            - deploy:
+                requires:
+                    - build
+                    - node_build
+                    
