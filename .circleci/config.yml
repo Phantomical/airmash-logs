@@ -17,6 +17,6 @@ jobs:
                     rustup run stable cargo build --release
             - store_artifacts:
                 path: ~/repo/stats-lib-rs/target/release/anonymise
-                destination: /artifacts
+                destination: /anonymise
 
 
