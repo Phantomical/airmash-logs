@@ -1,0 +1,8 @@
+[package]
+name = "statslib"
+version = "0.1.0"
+authors = ["Phantomical <phantomical@github.com>"]
+
+[dependencies]
+regex = "*"
+lazy_static = "*"
