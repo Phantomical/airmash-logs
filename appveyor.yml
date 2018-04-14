@@ -28,13 +28,13 @@ build_script:
     - cd ../balancebot
     - npm run build
     - cd ..
-    # Build rust statslib
-    - cd stats-lib-rs
-    - cargo build --release
     # Build artifacts
     - tar czf stats-lib.tar.gz stats-lib
     - cat statsbot/statsbot.min.js | gzip --best > statsbot.min.js.gz
     - cat balancebot/balancebot.min.js | gzip --best > balancebot.min.js.gz
+    
+test_script:
+    - cargo test
     
 artifacts:
     - path: statsbot.min.js.gz
