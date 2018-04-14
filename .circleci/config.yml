@@ -31,9 +31,43 @@ jobs:
                     cd ~/repo/stats-lib-rs
                     rustup run stable cargo test
                     
+    node_build:
+        working_directory: ~/repo
+        docker:
+            - image:circleci/node:6.11-stretch
+            
+        steps:
+            - checkout
+            - run:
+                command: |
+                    cd ~/repo/statsbot
+                    npm install --depth 0
+                    npm run build
+                    gzip statsbot.min.js --best
+            - run:
+                command: |
+                    cd ~/repo/balancebot
+                    npm install --depth 0
+                    npm run build
+                    gzip balancebot.min.js --best
+            - run: 
+                command: |
+                    tar czf stats-lib.tar.gz stats-lib
+                    
+            - store_artifacts:
+                path: ~/repo/statsbot/statsbot.min.js.gz
+                destination: /statsbot.min.js.gz
+            - store_artifacts:
+                path: ~/repo/balancebot/balancebot.min.jz.gz
+                destination: /balancebot.min.js.gz
+            - store_artifacts:
+                path: ~/repo/stats-lib.tar.gz
+                destination: /stats-lib.tar.gz
+                    
 workflows:
     version: 2
     build_and_test:
         jobs:
             - build
             - test
+            - node_build
