@@ -34,8 +34,7 @@ jobs:
                 command: |
                     cd ~/repo/stats-lib-rs
                     rustup run stable cargo test
-                    
-    node_build:
+    statsbot_build:
         working_directory: ~/repo
         docker:
             - image: circleci/node:6.11-stretch
@@ -51,6 +50,21 @@ jobs:
                     npm run build
                     gzip statsbot.min.js --best
                     mv statsbot.min.js.gz ~/workspace/statsbot.min.js.gz
+                    
+            - persist_to_workspace:
+                root: ~/workspace
+                paths:
+                    - statsbot.min.js.gz 
+                    
+    balancebot_build:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/node:6.11-stretch
+            
+        steps:
+            - checkout
+            - run:
+                command: mkdir ~/workspace
             - run:
                 command: |
                     cd ~/repo/balancebot
@@ -58,6 +72,21 @@ jobs:
                     npm run build
                     gzip balancebot.min.js --best
                     mv balancebot.min.js.gz ~/workspace/balancebot.min.js.gz
+                    
+            - persist_to_workspace:
+                root: ~/workspace
+                paths:
+                    - balancebot.min.js.gz  
+                    
+    stats_lib_build:
+        working_directory: ~/repo
+        docker:
+            - image: alpine:3.7
+            
+        steps:
+            - checkout
+            - run:
+                command: mkdir ~/workspace
             - run: 
                 command: |
                     tar czf stats-lib.tar.gz stats-lib
@@ -66,8 +95,6 @@ jobs:
             - persist_to_workspace:
                 root: ~/workspace
                 paths:
-                    - statsbot.min.js.gz
-                    - balancebot.min.js.gz
                     - stats-lib.tar.gz
     deploy:
         working_directory: ~/repo
@@ -93,13 +120,17 @@ jobs:
                     
 workflows:
     version: 2
-    build_and_test:
+    full_build:
         jobs:
             - build
             - test
-            - node_build
+            - statsbot_build
+            - balancebot_build
+            - stats_lib_build
             - deploy:
                 requires:
                     - build
-                    - node_build
+                    - statsbot_build
+                    - balancebot_build
+                    - stats_lib_build
                     
