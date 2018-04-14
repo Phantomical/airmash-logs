@@ -19,4 +19,14 @@ jobs:
                 path: ~/repo/stats-lib-rs/target/release/anonymise
                 destination: /anonymise
 
-
+    test:
+        working_directory: ~/repo
+    
+        docker:
+            - image: abronan/rust-circleci:latest
+        steps:
+            - checkout
+            - run:
+                command: |
+                    cd ~/repo/stats-lib-rs
+                    rustup run stable cargo test
