@@ -109,12 +109,14 @@ jobs:
             - run:
                 command: |
                     cp statsbot/botrun ~/workspace/botrun
-                    chmod 555 ~/workspace/botrun
+                    chmod 557 ~/workspace/botrun
             - run:
-                command: chmod 555 ~/workspace/anonymise
+                command: chmod 557 ~/workspace/anonymise
                 
             - run:
-                tar czf statsbot.tar.gz ~/workspace
+                command: |
+                    cd ~
+                    tar czf statsbot.tar.gz workspace
                 
             - store_artifacts:
                 path: statsbot.tar.gz

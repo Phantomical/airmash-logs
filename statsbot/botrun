@@ -9,7 +9,7 @@ gunzip statsbot.min.js.gz
 
 circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
 path=$(curl -s https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/latest/artifacts?circle-token=$circleci_token | grep -o 'https://[^"]*')
-curl -s $path > anonymise
+curl -s $path > statsbot.tar.gz
 
 timeout $cutoff_time node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
