@@ -114,7 +114,7 @@ jobs:
                 command: chmod 555 ~/workspace/anonymise
                 
             - run:
-                tar czf ~/workspace statsbot.tar.gz
+                tar czf statsbot.tar.gz ~/workspace
                 
             - store_artifacts:
                 path: statsbot.tar.gz
