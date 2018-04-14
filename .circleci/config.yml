@@ -16,7 +16,7 @@ jobs:
                     cd ~/repo/stats-lib-rs
                     rustup run stable cargo build --release
                     mv ~/repo/stats-lib-rs/target/release/anonymise ~/workspace/anonymise
-            - persisty_to_workspace:
+            - persist_to_workspace:
                 root: ~/workspace
                 paths:
                     - anonymise
