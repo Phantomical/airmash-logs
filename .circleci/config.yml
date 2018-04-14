@@ -72,7 +72,7 @@ jobs:
     deploy:
         working_directory: ~/repo
         docker:
-            - image: ubuntu:16.04
+            - image: circleci/node:6.11-stretch
             
         steps: 
             - attach_workspace:
