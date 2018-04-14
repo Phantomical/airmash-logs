@@ -3,11 +3,18 @@ environment:
     nodejs_version: "6"
     
 install:
+    # Setup rust to cross-compile for 64bit linux
+    - appveyor DownloadFile https://win.rustup.rs/ -FileName rustup-init.exe
+    - rustup-init -yv --default-toolchain stable --default-host x86_64-pc-windows-gnu
+    - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
+    - rustc -vV
+    - cargo -vV
+    # Install node and node modules for statsbot and balancebot
     - ps: Install-Product node $env:nodejs_version
     - cd statsbot
-    - npm install --depth 0 --quiet
+    - npm install --depth 0 --silent
     - cd ../balancebot
-    - npm install --depth 0 --quiet
+    - npm install --depth 0 --silent
     - cd ..
     
 # Install our own version of node, so this isn't important
