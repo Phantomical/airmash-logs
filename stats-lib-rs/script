@@ -1,0 +1,45 @@
+#!/bin/bash
+
+circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
+
+# Download required artifacts from CircleCI
+# This involves using the CircleCI API to find them,
+# hence the use of jq to parse the responses
+build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
+path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
+wget -q $path -O statsbot.tar.gz
+tar xzf statsbot.tar.gz
+
+# The goal is to roll logs over every 6hrs
+cutoff_time=$(($(date -d '+6 hours' +%s) - $(date +%s) + 1))
+filename=logs/statsbot-log-$(date +%F)
+
+# Run statsbot and save a backup log to the file log-complete
+# Errors are also saved to errlog
+timeout $cutoff_time node statsbot/statsbot.min.js | tee -a log-complete > log 2>> errlog
+
+exitval=$?
+
+ctr=0
+while [ -e $filename-$ctr.gz ]; do
+	((ctr++))
+done
+
+if [ -s log ]; do
+	# Save the log to a temp dir so it isn't overwritten
+	# Anonymise opens the log twice, so this is required
+	tdir=$(mktemp -d /tmp/statsbot-log.XXXXXXXXX)
+	mv log $tdir/log
+	
+	# Anonymise the log in the background
+	bash -c "statsbot/anonymise $tdir/log > $filename-$ctr && rm -rf $tdir" &
+fi
+
+rm logs/stats-lib.tar.gz
+cp statsbot/stats-lib.tar.gz logs/stats-lib.tar.gz
+
+if [ $exitval -ne 56 ]; then
+	# Restart script with the new one
+	exec ./statsbot/botrun
+fi
+

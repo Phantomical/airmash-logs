@@ -3,13 +3,14 @@
 cutoff_time=$(($(date -d '+6 hours' +%s) - $(date +%s) + 1))
 filename=~/logs/statsbot-log-$(date +%F)
 
-rm -f statsbot.min.js
+rm -rf statsbot
 wget https://ci.appveyor.com/api/projects/phantomical/airmash-logs/artifacts/statsbot.min.js.gz?branch=master -O statsbot.min.js.gz
-gunzip statsbot.min.js.gz
+gunzip statsbot.min.js.gz -o statsbot.min.js
 
 circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
-path=$(curl -s https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/latest/artifacts?circle-token=$circleci_token | grep -o 'https://[^"]*')
-curl -s $path > statsbot.tar.gz
+build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
+path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
+wget -q $path -O statsbot.tar.gz
 
 timeout $cutoff_time node statsbot.min.js | tee -a ~/statsbot-log-complete > ~/statsbot-log 2>> ~/statsbot-errlog
 
