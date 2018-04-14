@@ -102,22 +102,24 @@ jobs:
             - image: circleci/node:6.11-stretch
             
         steps: 
+            - checkout        
             - attach_workspace:
                 at: ~/workspace
                 
+            - run:
+                command: |
+                    cp statsbot/botrun ~/workspace/botrun
+                    chmod 555 ~/workspace/botrun
+            - run:
+                command: chmod 555 ~/workspace/anonymise
+                
+            - run:
+                tar czf ~/workspace statsbot.tar.gz
+                
             - store_artifacts:
-                path: ~/workspace/statsbot.min.js.gz
-                destination: /statsbot.min.js.gz
-            - store_artifacts:
-                path: ~/workspace/balancebot.min.js.gz
-                destination: /balancebot.min.js.gz
-            - store_artifacts:
-                path: ~/workspace/stats-lib.tar.gz
-                destination: /stats-lib.tar.gz
-            - store_artifacts:
-                path: ~/workspace/anonymise
-                destination: /anonymise
-                    
+                path: statsbot.tar.gz
+                destination: statsbot.tar.gz
+                
 workflows:
     version: 2
     full_build:

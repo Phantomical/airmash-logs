@@ -22,7 +22,7 @@ while [ -e $filename-$ctr.gz ]; do
 done
 
 if [ -s ~/statsbot-log ]; then
-	./anonymise ~/statsbot-log | gzip > $filename-$ctr.gz
+	./../stats-lib/anonymise.py ~/statsbot-log | gzip > $filename-$ctr.gz
 fi
 
 rm ~/logs/stats-lib.tar.gz
