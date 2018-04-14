@@ -34,7 +34,9 @@ build_script:
     - cat balancebot/balancebot.min.js | gzip --best > balancebot.min.js.gz
     
 test_script:
+    - cd stats-lib-rs
     - cargo test
+    - cd ..
     
 artifacts:
     - path: statsbot.min.js.gz
