@@ -3,6 +3,9 @@ name = "statslib"
 version = "0.1.0"
 authors = ["Phantomical <phantomical@github.com>"]
 
+[profile.release]
+lto = true
+
 [dependencies]
 regex = "*"
 lazy_static = "*"
