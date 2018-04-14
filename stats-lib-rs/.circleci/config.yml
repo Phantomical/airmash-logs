@@ -1,0 +1,32 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  build:
+    docker:
+      - image: abronan/rust-circleci:latest
+      
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: project-cache
+      
+      - run:
+        command: |
+          rustup run stable cargo build --release
+          
+      - store_artifacts:
+        path: ~/repo/stats-lib-rs/target/release/anonymise
+        destination: /
+      
+      - save_cache:
+          key: project-cache
+          paths:
+            - "~/.cargo"
+            - "./target"
+
