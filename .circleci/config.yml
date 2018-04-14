@@ -60,9 +60,9 @@ jobs:
             - store_artifacts:
                 path: ~/repo/balancebot/balancebot.min.jz.gz
                 destination: /balancebot.min.js.gz
-#            - store_artifacts:
-#                path: ~/repo/stats-lib.tar.gz
-#                destination: /stats-lib.tar.gz
+            - store_artifacts:
+                path: ~/repo/stats-lib.tar.gz
+                destination: /stats-lib.tar.gz
                     
 workflows:
     version: 2
