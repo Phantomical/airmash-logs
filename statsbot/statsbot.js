@@ -21,8 +21,8 @@ if (process.argv.length < 4) {
     MYNAME = "STATSBOT";
 }
 else {
-    var OWNER = process.argv[2];
-    var MYNAME = process.argv[3];
+    OWNER = process.argv[2];
+    MYNAME = process.argv[3];
 }
 
 var client = new AirmashClient(
