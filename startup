@@ -1,0 +1,14 @@
+#!/bin/bash
+
+circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
+
+# Download required artifacts from CircleCI
+# This involves using the CircleCI API to find them,
+# hence the use of jq to parse the responses
+build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
+path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
+wget -q $path -O statsbot.tar.gz
+tar xzf statsbot.tar.gz
+
+# Restart script with the new one
+exec ./statsbot/botrun
