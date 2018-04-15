@@ -143,7 +143,7 @@ jobs:
                 command: | 
                     mkdir ~/workspace
                     cd docs
-                    tar xjf build docs.tar.bz2
+                    tar xjf docs.tar.bz2 build
                     mv docs/build ~/workspace/docs
                     
             - store_artifacts:
