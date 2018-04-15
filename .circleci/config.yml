@@ -144,7 +144,7 @@ jobs:
                     mkdir ~/workspace
                     cd docs
                     ls
-                    tar cj - build | bzip2 > docs.tar.bz2
+                    tar cf - build | bzip2 > docs.tar.bz2
                     mv docs/build ~/workspace/docs
                     
             - store_artifacts:
