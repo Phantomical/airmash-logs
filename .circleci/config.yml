@@ -142,6 +142,7 @@ jobs:
             - run:
                 command: | 
                     mkdir ~/workspace
+                    cd docs
                     tar xjf build docs.tar.bz2
                     mv docs/build ~/workspace/docs
                     
