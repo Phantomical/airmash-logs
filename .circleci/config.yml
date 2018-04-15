@@ -129,7 +129,7 @@ jobs:
             - checkout
             
             - run:
-                command: apt-get install pandoc
+                command: sudo apt-get install pandoc
                 
             - run:
                 command: |
