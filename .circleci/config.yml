@@ -143,9 +143,8 @@ jobs:
                 command: | 
                     mkdir ~/workspace
                     cd docs
-                    ls
                     tar cf - build | bzip2 > docs.tar.bz2
-                    mv docs/build ~/workspace/docs
+                    mv build ~/workspace/docs
                     
             - store_artifacts:
                 path: docs/docs.tar.bz2
