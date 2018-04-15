@@ -136,7 +136,7 @@ jobs:
                     cd docs
                     mkdir build
                     for f in *.md; do
-                        pandoc -s -o build/${filename%.*}.html $f
+                        pandoc -s -o build/$f.html $f
                     done
                     
             - run:
