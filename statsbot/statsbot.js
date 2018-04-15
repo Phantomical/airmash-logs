@@ -3,7 +3,7 @@
 const AirmashClient = require('./client');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
-const throttle = require('lodash.throttle');
+const throttledQueue = require('throttled-queue');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -14,16 +14,8 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
-let OWNER = '';
-let MYNAME = '';
-if (process.argv.length < 4) {
-    OWNER = "STEAMROLLER";
-    MYNAME = "STATSBOT";
-}
-else {
-    OWNER = process.argv[2];
-    MYNAME = process.argv[3];
-}
+const OWNER = process.argv[2];
+const MYNAME = process.argv[3];
 
 var client = new AirmashClient(
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath, true, {
@@ -32,17 +24,61 @@ var client = new AirmashClient(
         horizonY: (1 << 16) - 1
     });
 
+var throttle = throttledQueue(2, 2000);
+
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
 var lowChat = true;
 
-const sendWhisper = throttle(function (msg, dest) {
-    client.send({
-        c: CLIENTPACKET.WHISPER,
-
+function sendWhisper(msg, dest) {
+    throttle(function () {
+        client.send({
+            c: CLIENTPACKET.WHISPER,
+            id: dest,
+            text: msg
+        });
     });
-}, 2000);
+}
+function sendChat(msg) {
+    throttle(function () {
+        client.send({
+            c: CLIENTPACKET.CHAT,
+            text: msg
+        });
+    });
+}
+
+function getGameTime() {
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+
+    var time = new Date() - client.gameStart;
+    return '' + Math.floor(time / msPerHour) +
+        ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
+        ' minutes, and ' + (Math.floor(time / 1000) % 60) +
+        ' seconds have elapsed since this game started.';
+}
+function getGameTimeApi() {
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+
+    var time = new Date() - client.gameStart;
+    return '' + time;
+}
+function getLastWin() {
+    if (client.lastWinner === 1)
+        return "The last game was won by blue team.";
+    else if (client.lastWinner === 2)
+        return "The last game was won by red team.";
+    else
+        return MYNAME + " has been restarted since this game " +
+            "and does not know which team won the last game.";
+}
+function getGameTeams() {
+    return "Red team: " + client.redteam.length + ", " +
+        "Blue team: " + client.blueteam.length + " (in testing)";
+}
 
 function processLogin(packet) {
     Logger.log("LOGIN", {});
@@ -130,65 +166,29 @@ function processDetailedScore(packet) {
     }
 }
 function processWhisper(packet) {
-    // Apparently packet.from is the current player 
-    //if (packet.to === ownerID || packet.from === ownerID) {
-    //    if (packet.text === ':restart') {
-    //        process.exit(2)
-    //    }
-    //    else if (packet.text === ':shutdown') {
-    //        process.exit(56)
-    //    }
-    //}
-
-    if (packet.text.toUpperCase() === '-GAME-TIME' && !lowChat) {
-        setTimeout(function () {
-            var msPerMinute = 60 * 1000;
-            var msPerHour = msPerMinute * 60;
-
-            var time = new Date() - client.gameStart;
-            var text = '' + Math.floor(time / msPerHour) +
-                ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
-                ' minutes, and ' + (Math.floor(time / 1000) % 60) +
-                ' seconds have elapsed since this game started.';
-
-            client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.from,
-                text: text
-            });
-        }, 500);
+    if (packet.text.toUpperCase() === '-GAME-TIME') {
+        sendWhisper(getGameTime(), packet.from);
     }
-    else if (packet.text.toUpperCase() === "HELP" && !lowChat) {
-        setTimeout(function () {
-            client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.from,
-                text: "whisper commands: -game-time, -anon-me"
-            });
-        }, 500);
-    }
-    else if (packet.text.toUpperCase() == "-ANON-ME") {
+    else if (packet.text.toUpperCase() === "-ANON-ME") {
         Logger.log("ANONYMISE", { id: packet.from });
 
-        if (!lowChat) {
-            setTimeout(function () {
-                client.send({
-                    c: CLIENTPACKET.WHISPER,
-                    id: packet.from,
-                    text: "You will now be anonymised from STATSBOT logs for this session."
-                });
-            }, 200);
-            setTimeout(function () {
-                client.send({
-                    c: CLIENTPACKET.WHISPER,
-                    id: packet.from,
-                    text: "To avoid seeing this message, use -anon-me-quiet for anonymization requests."
-                });
-            }, 400);
-        }
+        let text = "You will now be anonymised from STATSBOT logs for this session.";
+        sendWhisper(text, packet.from);
     }
-    else if (packet.text.toUpperCase() == '-ANON-ME-QUIET' && !lowChat) {
+    else if (packet.text.toUpperCase() === '-ANON-ME-QUIET' && !lowChat) {
         Logger.log("ANONYMISE", { id: packet.from });
+    }
+    else if (packet.text.toUpperCase() === '-LAST-WIN') {
+        sendWhisper(getLastWin(), packet.from);
+    }
+    else if (packet.text.toUpperCase() === '-GAME-TEAMS') {
+        sendWhisper(getGameTeams(), packet.from);
+    }
+    else if (packet.text.toUpperCase() === '-API-GAME-TIME') {
+        sendWhisper(getGameTimeApi(), packet.from);
+    }
+    else if (packet.text.toUpperCase() === '-API-GAME-START') {
+        sendWhisper('' + client.gameStart.getTime(), packet.from);
     }
 
     Logger.log("CHAT_WHISPER", {
@@ -199,76 +199,24 @@ function processWhisper(packet) {
 }
 function processChatPublic(packet) {
     if (packet.text.toUpperCase() === "-SWAM-PING") {
-        setTimeout(function () {
-            client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.id,
-                text: "I'm using STARMASH, theme: " + MYNAME
-            });
-        }, 500);
+        sendWhisper("I'm using STARMASH, theme: " + MYNAME, packet.id);
     }
     else if (packet.text.toUpperCase() === "-BOT-PING") {
-        setTimeout(function () {
-            client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.id,
-                text: "I am " + MYNAME + ", owner: " + OWNER
-            });
-        }, 500);
+        sendWhisper("I am " + MYNAME + ", owner: " + OWNER, packet.id);
     }
     else if (packet.text.toUpperCase() === "-PROW-PING") {
-        setTimeout(function () {
-            client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: packet.id,
-                text: "STATSBOT cannot find prowlers for you :("
-            });
-        }, 500);
+        sendWhisper(
+            "STATSBOT cannot find prowlers for you :(",
+            packet.id);
     }
     else if (packet.text.toUpperCase() === '-GAME-TIME') {
-        setTimeout(function () {
-            var msPerMinute = 60 * 1000;
-            var msPerHour = msPerMinute * 60;
-
-            var time = new Date() - client.gameStart;
-            var text = '' + Math.floor(time / msPerHour) +
-                ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
-                ' minutes, and ' + (Math.floor(time / 1000) % 60) +
-                ' seconds have elapsed since this game started.';
-
-            client.send({
-                c: CLIENTPACKET.CHAT,
-                text: text
-            });
-        }, 500);
+        sendChat(getGameTime());
     }
     else if (packet.text.toUpperCase() === '-LAST-WIN') {
-        setTimeout(function () {
-            var text = '';
-            if (client.lastWinner === 1)
-                text = "The last game was won by blue team.";
-            else if (client.lastWinner === 2)
-                text = "The last game was won by red team.";
-            else
-                text = MYNAME + " has been restarted since this game " +
-                    "and does not know which team won the last game.";
-
-            client.send({
-                c: CLIENTPACKET.CHAT,
-                text: text
-            });
-        }, 500);
+        sendChat(getLastWin());
     }
     else if (packet.text.toUpperCase() === '-GAME-TEAMS') {
-        setTimeout(function () {
-            var text = "Red team: " + client.redteam.length + ", " +
-                "Blue team: " + client.blueteam.length + " (in testing)";
-
-            client.send({
-                c: CLIENTPACKET.CHAT,
-                text: text
-            });
-        });
+        sendChat(getGameTeams());
     }
 
     Logger.log("CHAT_PUBLIC", {

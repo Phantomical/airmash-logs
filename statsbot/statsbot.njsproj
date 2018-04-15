@@ -7,6 +7,7 @@
     <EnableTypeScript>true</EnableTypeScript>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <ScriptArguments>STEAMROLLER "STATSBOT IN TRAINING" </ScriptArguments>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -14,7 +15,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>6b5e21c1-e474-47db-9161-169b6c2042c9</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>tests\game-time.test.js</StartupFile>
+    <StartupFile>statsbot.js</StartupFile>
     <StartWebBrowser>False</StartWebBrowser>
     <SearchPath>
     </SearchPath>
