@@ -28,7 +28,7 @@ done
 if [ -s log ]; do
 	# Save the log to a temp dir so it isn't overwritten
 	# Anonymise opens the log twice, so this is required
-	tdir=$(mktemp -d /tmp/statsbot-log.XXXXXXXXX)
+	tdir=$(mktemp -d /tmp/statsbot-log-$(date +%F).XXXXXXXXX)
 	mv log $tdir/log
 	
 	# Anonymise the log in the background
