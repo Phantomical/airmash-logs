@@ -157,6 +157,7 @@ workflows:
             - statsbot_build
             - balancebot_build
             - stats_lib_build
+            - doc_build
             - deploy:
                 requires:
                     - build
