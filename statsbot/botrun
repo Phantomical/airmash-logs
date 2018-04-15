@@ -8,7 +8,7 @@ filename=logs/statsbot-log-$(date +%F)
 
 # Run statsbot and save a backup log to the file log-complete
 # Errors are also saved to errlog
-timeout $cutoff_time node statsbot/statsbot.min.js | tee -a log-complete > log 2>> errlog
+timeout $cutoff_time node statsbot/statsbot.min.js "$1" "$2" | tee -a log-complete > log 2>> errlog
 
 exitval=$?
 
@@ -41,5 +41,5 @@ cp statsbot/stats-lib.tar.gz logs/stats-lib.tar.gz
 
 if [ $exitval -ne 56 ]; then
 	# Restart script with the new one
-	exec ./statsbot/botrun
+	exec ./statsbot/botrun "$1" "$2"
 fi

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ $# -lt 3 ]; then
+	echo "Usage: startup <owner> <botname>"
+fi
+
 circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
 
 # Download required artifacts from CircleCI
@@ -13,4 +17,4 @@ tar xzf statsbot.tar.gz
 mkdir logs
 
 # Restart script with the new one
-exec ./statsbot/botrun
+exec ./statsbot/botrun "$1" "$2"

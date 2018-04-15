@@ -14,8 +14,16 @@ const PlayPath = GameAssets.playPath;
 Logger.active_info = true;
 Logger.debug_info = true;
 
-var OWNER = "STEAMROLLER";
-var MYNAME = "STATSBOT";
+let OWNER = '';
+let MYNAME = '';
+if (process.argv.length < 4) {
+    OWNER = "STEAMROLLER";
+    MYNAME = "STATSBOT";
+}
+else {
+    var OWNER = process.argv[2];
+    var MYNAME = process.argv[3];
+}
 
 var client = new AirmashClient(
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath, true, {
