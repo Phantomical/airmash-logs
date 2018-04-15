@@ -38,7 +38,4 @@ test_script:
     - cd ..
     
 artifacts:
-    - path: statsbot.min.js.gz
-    - path: balancebot.min.js.gz
-    - path: stats-lib.tar.gz
     - path: startup
