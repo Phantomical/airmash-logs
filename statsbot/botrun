@@ -8,7 +8,7 @@ circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
 build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
 path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
 wget -q $path -O statsbot.tar.gz
-tar xjf statsbot.tar.gz
+tar xzf statsbot.tar.gz
 
 # The goal is to roll logs over every 6hrs
 cutoff_time=$(($(date -d '+6 hours' +%s) - $(date +%s) + 1))
@@ -25,7 +25,7 @@ while [ -e $filename-$ctr.gz ]; do
 	((ctr++))
 done
 
-if [ -s log ]; do
+if [ -s log ]; then
 	# Save the log to a temp dir so it isn't overwritten
 	# Anonymise opens the log twice, so this is required
 	tdir=$(mktemp -d /tmp/statsbot-log-$(date +%F).XXXXXXXXX)
