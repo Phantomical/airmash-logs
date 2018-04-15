@@ -2,14 +2,6 @@
 
 circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
 
-# Download required artifacts from CircleCI
-# This involves using the CircleCI API to find them,
-# hence the use of jq to parse the responses
-build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
-path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
-wget -q $path -O statsbot.tar.gz
-tar xzf statsbot.tar.gz
-
 # The goal is to roll logs over every 6hrs
 cutoff_time=$(($(date -d '+6 hours' +%s) - $(date +%s) + 1))
 filename=logs/statsbot-log-$(date +%F)
@@ -34,6 +26,14 @@ if [ -s log ]; then
 	# Anonymise the log in the background
 	bash -c "statsbot/anonymise $tdir/log | gzip -9 > $filename-$ctr.gz && rm -rf $tdir" &
 fi
+
+# Download required artifacts from CircleCI
+# This involves using the CircleCI API to find them,
+# hence the use of jq to parse the responses
+build_num=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs?circle-token=$circleci_token&filter=successful" -O - | jq '[.[] | select(.build_parameters.CIRCLE_JOB=="deploy")][0].build_num')
+path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash-logs/$build_num/artifacts?circle-token=$circleci_token&branch=master&filter=successful" -O - | jq -r '.[0].url')
+wget -q $path -O statsbot.tar.gz
+tar xzf statsbot.tar.gz
 
 # Update stats-lib from 
 rm logs/stats-lib.tar.gz
