@@ -10,5 +10,7 @@ path=$(wget -q "https://circleci.com/api/v1.1/project/github/phantomical/airmash
 wget -q $path -O statsbot.tar.gz
 tar xzf statsbot.tar.gz
 
+mkdir logs
+
 # Restart script with the new one
 exec ./statsbot/botrun
