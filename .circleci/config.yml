@@ -146,8 +146,8 @@ jobs:
                     mv docs/build ~/workspace/docs
                     
             - store_artifacts:
-                root: docs/docs.tar.bz2
-                paths: docs.tar.bz2
+                path: docs/docs.tar.bz2
+                destination: docs.tar.bz2
 workflows:
     version: 2
     full_build:
