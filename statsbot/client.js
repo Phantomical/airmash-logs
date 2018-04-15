@@ -30,6 +30,7 @@ class AirmashClient {
         this.buildwsfn = buildwsfn;
         this.decode = !!noDecode;
         this.open = false;
+        this.firstgame = true;
 
         this.players = {};
         this.redteam = [];
@@ -144,6 +145,7 @@ class AirmashClient {
         let me = this;
         setTimeout(function () {
             me.gameStart = new Date();
+            this.firstgame = false;
         }, 30 * 1000);
     }
     _handlePlayerLevel(packet) {

@@ -190,6 +190,9 @@ function processWhisper(packet) {
     else if (packet.text.toUpperCase() === '-API-GAME-START') {
         sendWhisper('' + client.gameStart.getTime(), packet.from);
     }
+    else if (packet.text.toUpperCase() === '-API-FIRSTGAME') {
+        sendWhisper('' + client.firstgame, packet.from);
+    }
 
     Logger.log("CHAT_WHISPER", {
         to: packet.to,
