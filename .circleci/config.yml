@@ -120,7 +120,34 @@ jobs:
             - store_artifacts:
                 path: ~/statsbot.tar.gz
                 destination: statsbot.tar.gz
+    doc_build:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/node:6.11-stretch
+            
+        steps:
+            - checkout
+            
+            - run:
+                command: apt-get install pandoc
                 
+            - run:
+                command: |
+                    cd docs
+                    mkdir build
+                    for $f in *.md; do
+                        pandoc -s -o build/${filename%.*}.html %f
+                    done
+                    
+            - run:
+                command: | 
+                    mkdir ~/workspace
+                    tar xjf docs.tar.bz2 build
+                    mv docs/build ~/workspace/docs
+                    
+            - store_artifacts:
+                root: docs/docs.tar.bz2
+                paths: docs.tar.bz2
 workflows:
     version: 2
     full_build:
