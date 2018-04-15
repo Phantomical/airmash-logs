@@ -32,7 +32,7 @@ if [ -s log ]; then
 	mv log $tdir/log
 	
 	# Anonymise the log in the background
-	bash -c "statsbot/anonymise $tdir/log > $filename-$ctr && rm -rf $tdir" &
+	bash -c "statsbot/anonymise $tdir/log | gzip -9 > $filename-$ctr.gz && rm -rf $tdir" &
 fi
 
 # Update stats-lib from 
