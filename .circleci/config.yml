@@ -141,11 +141,12 @@ jobs:
                     mkdir ~/workspace
                     cd docs
                     tar cf - build | bzip2 > docs.tar.bz2
-                    mv build ~/workspace
+                    mv build ~/workspace/docs
                     
-            - store_artifacts:
-                path: docs/docs.tar.bz2
-                destination: docs.tar.bz2
+            - persist_to_workspace:
+                root: ~/workspace
+                paths:
+                    - docs
 workflows:
     version: 2
     full_build:
