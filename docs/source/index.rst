@@ -8,13 +8,7 @@ Welcome to statsbot's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   
+   commands
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

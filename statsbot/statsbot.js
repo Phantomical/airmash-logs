@@ -60,9 +60,6 @@ function getGameTime() {
         ' seconds have elapsed since this game started.';
 }
 function getGameTimeApi() {
-    var msPerMinute = 60 * 1000;
-    var msPerHour = msPerMinute * 60;
-
     var time = new Date() - client.gameStart;
     return '' + time;
 }
