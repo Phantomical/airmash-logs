@@ -134,7 +134,7 @@ jobs:
             - run:
                 command: |
                     cd docs
-                    make
+                    make singlehtml
                     
             - run:
                 command: | 
