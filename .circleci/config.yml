@@ -129,7 +129,7 @@ jobs:
             - checkout
             
             - run:
-                command: pip3 install -U sphinx
+                command: sudo pip3 install -U sphinx
                 
             - run:
                 command: |
