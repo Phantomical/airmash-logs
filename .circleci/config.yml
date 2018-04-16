@@ -123,7 +123,7 @@ jobs:
     doc_build:
         working_directory: ~/repo
         docker:
-            - image: circleci/3.6.5-node-browsers
+            - image: circleci/python:3.6.5-node-browsers
             
         steps:
             - checkout
