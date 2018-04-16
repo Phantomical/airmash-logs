@@ -3,39 +3,18 @@ environment:
     nodejs_version: "6"
     
 install:
-    - curl https://static.rust-lang.org/rustup/dist/x86_64-pc-windows-msvc/rustup-init.exe -o rustup-init.exe
-    - rustup-init -y --default-toolchain stable --default-host x86_64-pc-windows-gnu
-    - set PATH=%PATH%;%USERPROFILE%\.cargo\bin
-    - rustc -vV
-    - cargo -vV
-    # Install node and node modules for statsbot and balancebot
-    - ps: Install-Product node $env:nodejs_version
-    - cd statsbot
-    - npm install --depth 0 --silent
-    - cd ../balancebot
-    - npm install --depth 0 --silent
-    - cd ..
+   python -m pip install -U sphinx
     
 # Install our own version of node, so this isn't important
 image: Visual Studio 2015
 
 build_script:
-    # Build statsbot
-    - cd statsbot
-    - npm run build
-    # Build balancebot
-    - cd ../balancebot
-    - npm run build
-    - cd ..
     # Build artifacts
-    - tar czf stats-lib.tar.gz stats-lib
-    - cat statsbot/statsbot.min.js | gzip --best > statsbot.min.js.gz
-    - cat balancebot/balancebot.min.js | gzip --best > balancebot.min.js.gz
-    
-test_script:
-    - cd stats-lib-rs
-    - cargo test
-    - cd ..
+    - cd docs
+    - make
+    - 7z a docs.zip docs
+    - mv docs.zip ../docs.zip
     
 artifacts:
     - path: startup
+    - path: docs.zip
