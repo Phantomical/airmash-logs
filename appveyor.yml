@@ -12,8 +12,9 @@ build_script:
     # Build artifacts
     - cd docs
     - make singlehtml
-    - 7z a docs.zip docs
-    - mv docs.zip ../docs.zip
+    - cd build
+    - 7z a docs.zip singlehtml
+    - mv docs.zip ../../docs.zip
     
 artifacts:
     - path: startup
