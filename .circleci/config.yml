@@ -123,28 +123,25 @@ jobs:
     doc_build:
         working_directory: ~/repo
         docker:
-            - image: circleci/node:6.11-stretch
+            - image: circleci/3.6.5-node-browsers
             
         steps:
             - checkout
             
             - run:
-                command: sudo apt-get install pandoc
+                command: pip3 install -U sphinx
                 
             - run:
                 command: |
                     cd docs
-                    mkdir build
-                    for f in *.md; do
-                        pandoc -s -o build/$f.html $f
-                    done
+                    make
                     
             - run:
                 command: | 
                     mkdir ~/workspace
                     cd docs
                     tar cf - build | bzip2 > docs.tar.bz2
-                    mv build ~/workspace/docs
+                    mv build ~/workspace
                     
             - store_artifacts:
                 path: docs/docs.tar.bz2
