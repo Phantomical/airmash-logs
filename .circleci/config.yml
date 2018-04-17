@@ -158,7 +158,7 @@ jobs:
             
             - run:
                 command: |
-                    docker login -e $AZCR_USER -u $AZCR_USER -p $AZCR_PASSWORD $AZCR_REGISTRY
+                    docker login -u $AZCR_USER -p $AZCR_PASSWORD $AZCR_REGISTRY
                     
             - run:
                 command: |
