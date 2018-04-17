@@ -27,5 +27,5 @@ pub fn write_record<'a>(r: &Record<'a>) -> String {
 		values.push(format!("{}: {}", key.to_string(), write_value(value)));
 	}
 
-	return format!("[{}]", values.join(","));
+	return format!("[{}]", values.join(", "));
 }

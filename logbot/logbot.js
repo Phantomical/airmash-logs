@@ -86,7 +86,7 @@ function processChatWhisper(packet) {
         client.send(encodeMessage({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
-            data: "" + packet.to
+            data: "" + packet.from
         }))
     }
 }
