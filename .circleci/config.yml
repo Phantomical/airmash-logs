@@ -147,6 +147,31 @@ jobs:
                 root: ~/workspace
                 paths:
                     - docs
+    docker_deploy:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/python:3.6.5-node-browsers
+            
+        steps:
+            - checkout
+            - setup_remote_docker
+            
+            - run:
+                command: |
+                    docker login -e $AZCR_USER -u $AZCR_USER -p $AZCR_PASSWORD $AZCR_REGISTRY
+                    
+            - run:
+                command: |
+                    cd docs
+                    make html
+                    docker build . -t statsbot-docs
+                    
+            - run:
+                command: |
+                    docker tag statsbot-doc $AZCR_REGISTRY/statsbot-docs
+                    docker push $AZCR_REGISTRY/statsbot-docs
+    
+                    
 workflows:
     version: 2
     full_build:
@@ -157,6 +182,10 @@ workflows:
             - balancebot_build
             - stats_lib_build
             - doc_build
+            - docker_hold:
+                type: approval
+                requires: 
+                    - doc_build
             - deploy:
                 requires:
                     - build
@@ -164,4 +193,9 @@ workflows:
                     - balancebot_build
                     - stats_lib_build
                     - doc_build
+            - docker_deploy:
+                requires:
+                    - doc_build
+                    - docker_hold
+                    
                     

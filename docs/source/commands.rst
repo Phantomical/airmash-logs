@@ -82,13 +82,17 @@ bots. All Whisper API commands are prefixed with -api
 --------------
 
 Returns the number of milliseconds that the current game 
-has been running. This is returned as an integer.
+has been running. This is returned as an integer. If
+-api-firstgame returns true, it will instead return the
+time since STATSBOT joined the current game.
 
 -api-game-start
 ---------------
 
-Returns the UTC time as returned by 
+Returns the UTC time of the start of the current game as returned by 
 `Date.getTime() <https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTime>`_.
+If -api-firstgame returns true, it will instead return the time 
+since STATSBOT joined the current game.
 
 -api-firstgame
 --------------
