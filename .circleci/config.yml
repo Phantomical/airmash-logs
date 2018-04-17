@@ -158,7 +158,7 @@ jobs:
             
             - run:
                 command: |
-                    docker login -u $AZCR_USER -p $AZCR_PASSWORD $AZCR_REGISTRY
+                    docker login $AZCR_REGISTRY -u $AZCR_USER -p $AZCR_PASSWORD
                     
             - run:
                 command: |
@@ -191,6 +191,7 @@ workflows:
                     - balancebot_build
                     - stats_lib_build
                     - doc_build
+                    - test
             - docker_deploy:
                 requires:
                     - docker_hold
