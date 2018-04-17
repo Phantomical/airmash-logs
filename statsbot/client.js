@@ -126,13 +126,21 @@ class AirmashClient {
     _handleReteam(packet) {
         this.spectating = false;
 
-        this.redteam = [];
-        this.blueteam = [];
+        console.error("blue: " + this.blueteam);
+        console.error("red: " + this.redteam);
 
         for (let i in packet.players) {
             let player = packet.players[i];
 
+            console.error("player: " + player.id + ", team: " + player.team);
+
             this.players[player.id].team = player.team;
+
+            let redidx = this.redteam .indexOf(player.id);
+            let bluidx = this.blueteam.indexOf(player.id);
+
+            this.redteam.splice(redidx, 1);
+            this.blueteam.splice(bluidx, 1);
 
             if (player.team === 1) {
                 this.redteam.push(player.id);
