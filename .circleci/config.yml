@@ -184,8 +184,6 @@ workflows:
             - doc_build
             - docker_hold:
                 type: approval
-                requires: 
-                    - doc_build
             - deploy:
                 requires:
                     - build
@@ -195,7 +193,7 @@ workflows:
                     - doc_build
             - docker_deploy:
                 requires:
-                    - doc_build
                     - docker_hold
+                    - doc_build
                     
                     
