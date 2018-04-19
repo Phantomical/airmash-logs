@@ -3,7 +3,7 @@
 circleci_token=1ce24f41ffca398bd57b9115c0e77d6290b5553d
 
 # The goal is to roll logs over every 6hrs
-cutoff_time=$(($(date -d '+6 hours' +%s) - $(date +%s) + 1))
+cutoff_time=$(($(date -d '+12 hours' +%s) - $(date +%s) + 1))
 filename=logs/statsbot-log-$(date +%F)
 
 # Run statsbot and save a backup log to the file log-complete
