@@ -33,7 +33,7 @@ class AirmashClient {
         this.open = false;
         this.firstgame = true;
 
-        this.queue = throttledQueue(4, 50);
+        //this.queue = throttledQueue(16, 200);
 
         this.isthrottled = false;
         this.isbanned = false;
@@ -66,7 +66,7 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
-        this.queue(function () {
+        //this.queue(function () {
             // TODO: Retry after a timeout?
             if (!this.open)
                 return;
@@ -75,7 +75,7 @@ class AirmashClient {
                 this.ws.send(encodeMessage(packet));
             else
                 this.ws.send(packet);
-        });
+        //});
     }
 
     _handleLogin(packet) {
