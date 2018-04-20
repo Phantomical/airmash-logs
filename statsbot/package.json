@@ -33,5 +33,15 @@
   "jshintConfig": {
     "esversion": 6,
     "node": true
+  },
+  "babel": {
+    "presets": [
+      "env",
+      {
+        "targets": {
+          "node": "6.10"
+        }
+      }
+    ]
   }
 }
