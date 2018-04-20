@@ -32,6 +32,9 @@ class AirmashClient {
         this.open = false;
         this.firstgame = true;
 
+        this.isthrottled = false;
+        this.isbanned = false;
+
         this.players = {};
         this.redteam = new Set();
         this.blueteam = new Set();
@@ -164,6 +167,20 @@ class AirmashClient {
             this.spectating = false;
         }
     }
+    _handleError(packet) {
+        switch (packet.error) {
+            case 1: // Disconnect for packet flooding
+                this.isthrottled = true;
+                setTimeout(function () {
+                    this.isthrottled = false;
+                }, 60 * 1000);
+                break;
+            case 2: // Banned for packet flooding
+            case 3: // Banned gobally
+                this.isbanned = true;
+                break;
+        }
+    }
 
     _messageHandler(packet) {
         this.callbacks.packet(packet);
@@ -201,6 +218,9 @@ class AirmashClient {
                 break;
             case SERVERPACKET.PLAYER_RESPAWN:
                 this._handlePlayerRespawn(packet);
+                break;
+            case SERVERPACKET.ERROR:
+                this._handleError(packet);
                 break;
         }
     }
@@ -242,6 +262,20 @@ class AirmashClient {
     }
     onclose(msg, code, reason) {
         this.open = false;
+
+        if (this.isbanned) {
+            setTimeout(function () {
+                this.isbanned = false;
+                this.onclose(msg, code, reason);
+            }.bind(this), 60 * 60 * 1000);
+            return;
+        }
+        else if (this.isthrottled) {
+            setTimeout(function () {
+                this.isthrottled = false;
+                this.onclose(msg, code, reason);
+            }.bind(this), 60 * 1000);
+        }
 
         if (this.restartOnDc) {
             this.ws = this.buildwsfn(this.serverURL);
