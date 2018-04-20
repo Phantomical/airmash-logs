@@ -16,6 +16,11 @@ statsbot/.vs/
 statsbot/package-lock.json
 statsbot/statsbot.min.js
 
+statsbot-ts/node_modules/
+statsbot-ts/.vs/
+statsbot-ts/package-lock.json
+statsbot-ts/statsbot.min.js
+
 balancebot/node_modules/
 balancebot/.vs/
 balancebot/package-lock.json

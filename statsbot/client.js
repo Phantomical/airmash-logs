@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
@@ -33,8 +33,8 @@ class AirmashClient {
         this.firstgame = true;
 
         this.players = {};
-        this.redteam = [];
-        this.blueteam = [];
+        this.redteam = new Set();
+        this.blueteam = new Set();
 
         this.callbacks = {};
 
@@ -91,10 +91,10 @@ class AirmashClient {
             };
 
             if (player.team === 1) {
-                this.blueteam.push(player.id);
+                this.blueteam.add(player.id);
             }
             else {
-                this.redteam.push(player.id);
+                this.redteam.add(player.id);
             }
         }
     }
@@ -108,45 +108,39 @@ class AirmashClient {
         };
 
         if (packet.team === 1) {
-            this.blueteam.push(packet.id);
+            this.blueteam.add(packet.id);
         }
         else {
-            this.redteam.push(packet.id);
+            this.redteam.add(packet.id);
         }
     }
     _handlePlayerLeave(packet) {
-        let redidx = this.redteam.indexOf(packet.id);
-        let bluidx = this.blueteam.indexOf(packet.id);
-
-        this.redteam.splice(redidx, 1);
-        this.blueteam.splice(bluidx, 1);
+        if (this.players[packet.id].team === 1) {
+            this.blueteam.delete(packet.id);
+        }
+        else {
+            this.redteam.delete(packet.id);
+        }
 
         delete this.players[packet.id];
     }
     _handleReteam(packet) {
         this.spectating = false;
-
-        console.error("blue: " + this.blueteam);
-        console.error("red: " + this.redteam);
-
+        
         for (let i in packet.players) {
             let player = packet.players[i];
 
-            console.error("player: " + player.id + ", team: " + player.team);
-
             this.players[player.id].team = player.team;
 
-            let redidx = this.redteam .indexOf(player.id);
-            let bluidx = this.blueteam.indexOf(player.id);
-
-            this.redteam.splice(redidx, 1);
-            this.blueteam.splice(bluidx, 1);
-
-            if (player.team === 1) {
-                this.redteam.push(player.id);
+            if (player.team === 2) {
+                // Player is joining red team
+                this.blueteam.delete(player.id);
+                this.redteam.add(player.id);
             }
             else {
-                this.blueteam.push(player.id);
+                // Player is joining blue team
+                this.redteam.delete(player.id);
+                this.blueteam.delete(player.id);
             }
         }
 

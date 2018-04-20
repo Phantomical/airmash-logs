@@ -1,11 +1,6 @@
 ﻿
 const jsesc = require('jsesc');
 
-const matchQuote = new RegExp('"', "g");
-const matchNewLine = new RegExp('\n', "g");
-const matchCR = new RegExp('\r', "g");
-const matchSlash = new RegExp('\\$');
-
 function sanitizeString(str) {
     return jsesc(str, { 'quotes': 'double', 'minimal': true });
 }
