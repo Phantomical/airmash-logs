@@ -31,7 +31,7 @@ var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
 var lowChat = true;
-var requestInterval = undefined;
+var requestInterval;
 
 function sendWhisper(msg, dest) {
     throttle(function () {
@@ -651,6 +651,7 @@ client.on('open', function () {
         });
     }, 1000);
 
+    // Cancel our previous scoredetailed request loop
     if (!!requestInterval) {
         clearInterval(requestInterval);
     }
