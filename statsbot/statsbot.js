@@ -16,6 +16,7 @@ Logger.debug_info = true;
 
 const OWNER = process.argv[2];
 const MYNAME = process.argv[3];
+const HELPTEXT = 'STATSBOT docs: https://steamroller.starma.sh/statsbot';
 
 var client = new AirmashClient(
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath, true, {
@@ -190,6 +191,9 @@ function processWhisper(packet) {
     else if (packet.text.toUpperCase() === '-API-FIRSTGAME') {
         sendWhisper('' + client.firstgame, packet.from);
     }
+    else if (packet.text.toUpperCase() === '-HELP' || packet.text.toUpperCase() === 'HELP') {
+        sendWhisper(HELPTEXT, packet.from);
+    }
 
     Logger.log("CHAT_WHISPER", {
         to: packet.to,
@@ -217,6 +221,9 @@ function processChatPublic(packet) {
     }
     else if (packet.text.toUpperCase() === '-GAME-TEAMS') {
         sendChat(getGameTeams());
+    }
+    else if (packet.text.toUpperCase() === '-STATSBOT-HELP') {
+        sendChat(HELPTEXT);
     }
 
     Logger.log("CHAT_PUBLIC", {
