@@ -31,6 +31,7 @@ var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
 var lowChat = true;
+var requestInterval = undefined;
 
 function sendWhisper(msg, dest) {
     throttle(function () {
@@ -650,8 +651,12 @@ client.on('open', function () {
         });
     }, 1000);
 
+    if (!!requestInterval) {
+        clearInterval(requestInterval);
+    }
+
     // Request a score board every 5s
-    setInterval(function () {
+    requestInterval = setInterval(function () {
         client.send({
             c: CLIENTPACKET.SCOREDETAILED
         });

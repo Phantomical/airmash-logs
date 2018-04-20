@@ -2,6 +2,7 @@
 
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
+const throttledQueue = require('throttled-queue');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -31,6 +32,8 @@ class AirmashClient {
         this.decode = !!noDecode;
         this.open = false;
         this.firstgame = true;
+
+        this.queue = throttledQueue(4, 50);
 
         this.isthrottled = false;
         this.isbanned = false;
@@ -63,14 +66,16 @@ class AirmashClient {
     }
     // Send and encode a packet over the websocket
     send(packet) {
-        // TODO: Retry after a timeout?
-        if (!this.open)
-            return;
+        this.queue(function () {
+            // TODO: Retry after a timeout?
+            if (!this.open)
+                return;
 
-        if (!this.noDecode)
-            this.ws.send(encodeMessage(packet));
-        else
-            this.ws.send(packet);
+            if (!this.noDecode)
+                this.ws.send(encodeMessage(packet));
+            else
+                this.ws.send(packet);
+        });
     }
 
     _handleLogin(packet) {
