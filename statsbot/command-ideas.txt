@@ -4,3 +4,7 @@
 2. -timer-enable/-timer-disable
    Keeps shield timings for both teams and displays them
    in global chat.
+   Implementation: TBD
+3. -game-kills
+   Gives the number of kills by each team.
+   Implementation: Use score board data

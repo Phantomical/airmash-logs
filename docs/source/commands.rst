@@ -32,6 +32,11 @@ which issued the ping.
 STATSBOT will respond indicating that it is using 
 StarMash with the theme STATSBOT.
 
+-statsbot-help
+--------------
+
+Makes statsbot give a link to this documentation.
+
 
 STATSBOT Whisper Commands
 =========================
@@ -41,6 +46,11 @@ players directly. For commands meant to be used
 by bots or mods see `STATSBOT Whisper API`_.
 
 To use these commands, whisper them to STATSBOT.
+
+help
+----
+
+Makes statsbot give a link to this documentation.
 
 -game-time
 ----------
