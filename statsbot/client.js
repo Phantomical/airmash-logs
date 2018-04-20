@@ -37,8 +37,8 @@ class AirmashClient {
         this.isbanned = false;
 
         this.players = {};
-        this.redteam = new Set;
-        this.blueteam = new Set;
+        this.redteam = new Set();
+        this.blueteam = new Set();
 
         this.callbacks = {};
 
@@ -80,8 +80,8 @@ class AirmashClient {
         this.team = packet.team;
 
         this.players = {};
-        this.redteam = new Set;
-        this.blueteam = new Set;
+        this.redteam = new Set();
+        this.blueteam = new Set();
 
         for (let i in packet.players) {
             let player = packet.players[i];
