@@ -194,6 +194,7 @@ workflows:
             - balancebot_build
             - stats_lib_build
             - doc_build
+            - statsbot_test1
             - docker_hold:
                 type: approval
             - deploy:
