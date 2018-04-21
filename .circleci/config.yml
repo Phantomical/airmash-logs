@@ -195,8 +195,6 @@ workflows:
             - stats_lib_build
             - doc_build
             - statsbot_test1
-            - docker_hold:
-                type: approval
             - deploy:
                 requires:
                     - build
@@ -206,9 +204,5 @@ workflows:
                     - doc_build
                     - test
                     - statsbot_test1
-            - docker_deploy:
-                requires:
-                    - docker_hold
-                    - doc_build
                     
                     
