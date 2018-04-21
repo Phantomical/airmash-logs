@@ -48,10 +48,12 @@ fn main() {
 			is_first = false;
 		}
 
+		let mut firsttime = true;
 		while timestamp - startdate > samplegap {
 			println!("{}", maxplayers);
-			maxplayers = numplayers;
+			maxplayers = if firsttime { numplayers } else { 0 };
 			startdate = startdate + samplegap;
+			firsttime = false;
 		}
 
 		if record.tag == "PLAYER_NEW" {

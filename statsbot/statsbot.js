@@ -75,8 +75,8 @@ function getLastWin() {
             "and does not know which team won the last game.";
 }
 function getGameTeams() {
-    return "Red team: " + client.redteam.size + ", " +
-        "Blue team: " + client.blueteam.size + " (in testing)";
+    return "Blue team: " + client.blueteam.size + ", " +
+        "Red team: " + client.redteam.size + "";
 }
 
 function processLogin(packet) {
