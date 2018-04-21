@@ -29,7 +29,7 @@ class AirmashClient {
         this.restartOnDc = restartOnDc;
         this.serverURL = serverURL;
         this.buildwsfn = buildwsfn;
-        this.decode = !!noDecode;
+        this.decode = !noDecode;
         this.open = false;
         this.firstgame = true;
 
@@ -68,7 +68,7 @@ class AirmashClient {
         if (!this.open)
             return;
 
-        if (!this.noDecode)
+        if (this.decode)
             this.ws.send(encodeMessage(packet));
         else
             this.ws.send(packet);
@@ -248,7 +248,7 @@ class AirmashClient {
     }
     onmessage(msg) {
         var packet = msg;
-        if (!this.noDecode)
+        if (this.decode)
             packet = decodeMessage(msg);
 
         if (packet.c === SERVERPACKET.PING) {

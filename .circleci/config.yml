@@ -171,7 +171,19 @@ jobs:
                     docker tag statsbot-doc $AZCR_REGISTRY/statsbot-docs
                     docker push $AZCR_REGISTRY/statsbot-docs
     
-                    
+              
+    statsbot_test1:
+        working_directory: ~/repo
+        docker:
+            - image: circleci/node:6.11-stretch
+            
+        steps:
+            - checkout
+            
+            - run:
+                command: |
+                    cd statsbot/tests
+                    node run-test.js
 workflows:
     version: 2
     full_build:
