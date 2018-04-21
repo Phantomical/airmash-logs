@@ -28,6 +28,7 @@ balancebot/package-lock.json
 stats-lib-rs/.vs/
 stats-lib-rs/target/
 stats-lib-rs/Cargo.lock
+stats-lib-rs/logs/
 
 docs/build/
 docs/.vs/

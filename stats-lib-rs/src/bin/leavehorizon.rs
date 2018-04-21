@@ -16,7 +16,6 @@ fn main() {
 	}
 
 	let file = File::open(args[2].clone()).unwrap();
-	let messagetype = args[1].clone();
 	let mut count = 0;
 	
 	let mut players: HashMap<i64, String> = HashMap::new();
