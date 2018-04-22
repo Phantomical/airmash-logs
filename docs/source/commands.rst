@@ -65,6 +65,12 @@ Does the same as the public -game-time command,
 except whispers the time to the player that issued 
 the command.
 
+-game-teams
+-----------
+Does the same as the public -game-teams command,
+except whispers the time to the player that 
+issued the command.
+
 -last-win
 ---------
 
