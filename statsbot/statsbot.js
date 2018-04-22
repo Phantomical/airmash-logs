@@ -138,6 +138,12 @@ function processPlayerKill(packet) {
         pos: [packet.posX, packet.posY]
     });
 }
+function processPlayerFlag(packet) {
+    Logger.log("PLAYER_FLAG", {
+        id: packet.id,
+        flag: packet.flag
+    });
+}
 function processReteam(packet) {
     for (var idx in packet.players) {
         const player = packet.players[idx];
@@ -595,6 +601,9 @@ function logPacket(packet) {
             break;
         case SERVERPACKET.PLAYER_LEVEL:
             processPlayerLevel(packet);
+            break;
+        case SERVERPACKET.PLAYER_FLAG:
+            processPlayerFlag(packet);
             break;
         case SERVERPACKET.GAME_FLAG:
             processGameFlag(packet);
