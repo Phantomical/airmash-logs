@@ -593,6 +593,9 @@ function logPacket(packet) {
         case SERVERPACKET.PLAYER_RETEAM:
             processReteam(packet);
             break;
+        case SERVERPACKET.PLAYER_LEVEL:
+            processPlayerLevel(packet);
+            break;
         case SERVERPACKET.GAME_FLAG:
             processGameFlag(packet);
             break;
