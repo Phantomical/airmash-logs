@@ -26,7 +26,9 @@ export class StatsBot {
     constructor(
         owner: string,
         name: string,
-        defaultHandlers: boolean = true) {
+        serverURL: string,
+        defaultHandlers: boolean = true)
+    {
         this.carriers = [0, 0]
         this.owner = owner;
         this.myname = name;
@@ -37,6 +39,25 @@ export class StatsBot {
         this.whisper = new CommandHandler();
 
         this.throttle = createThrottle(15 * 1000, 8, 20);
+
+        this.client = new AirmashClient(
+            serverURL,
+            {
+                name: name,
+                horizonX: 65535,
+                horizonY: 65535
+            },
+            {
+                restartOnDc: true
+            }
+        );
+
+        if (defaultHandlers) {
+            this._registerHandlers();
+        }
+
+        this._registerPublicCommands(defaultHandlers);
+        this._registerWhisperCommands();
     }
 
     sendChat(msg: string) {
@@ -106,28 +127,30 @@ export class StatsBot {
         this.client.on("CHAT_PUBLIC", this._onChatPublic.bind(this));
         this.client.on("CHAT_WHISPER", this._onChatWhisper.bind(this));
     }
-    _registerPublicCommands() {
-        // Commands with public responses
-        this.public.addCommand("-game-time", function (id, rest) {
-            if (rest !== '') return;
+    _registerPublicCommands(defaultHandlers: boolean) {
+        if (defaultHandlers) {
+            // Commands with public responses
+            this.public.addCommand("-game-time", function (id, rest) {
+                if (rest !== '') return;
 
-            this.sendChat(this.getGameTime());
-        }.bind(this));
-        this.public.addCommand('-last-win', function (id, rest) {
-            if (rest !== '') return;
+                this.sendChat(this.getGameTime());
+            }.bind(this));
+            this.public.addCommand('-last-win', function (id, rest) {
+                if (rest !== '') return;
 
-            this.sendChat(this.getLastWin());
-        }.bind(this));
-        this.public.addCommand('-game-teams', function (id, rest) {
-            if (rest !== '') return;
+                this.sendChat(this.getLastWin());
+            }.bind(this));
+            this.public.addCommand('-game-teams', function (id, rest) {
+                if (rest !== '') return;
 
-            this.sendChat(this.getGameTeams());
-        }.bind(this));
-        this.public.addCommand('-statsbot-help', function (id, rest) {
-            if (rest !== '') return;
+                this.sendChat(this.getGameTeams());
+            }.bind(this));
+            this.public.addCommand('-statsbot-help', function (id, rest) {
+                if (rest !== '') return;
 
-            this.sendChat(HELPTEXT);
-        }.bind(this));
+                this.sendChat(HELPTEXT);
+            }.bind(this));
+        }
 
         // Commands with whisper responses
         this.public.addCommand('-bot-ping', function (id, rest) {
@@ -135,16 +158,19 @@ export class StatsBot {
 
             this.sendWhisper("I am " + this.myname + ", owner: " + this.owner, id);
         }.bind(this));
-        this.public.addCommand('-prow-ping', function (id, rest) {
-            if (rest !== '') return;
 
-            this.sendWhisper(this.myname + ' cannot find prowlers for you :(');
-        }.bind(this));
-        this.public.addCommand('-swam-ping', function (id, rest) {
-            if (rest !== '') return;
+        if (defaultHandlers) {
+            this.public.addCommand('-prow-ping', function (id, rest) {
+                if (rest !== '') return;
 
-            this.sendWhisper("I'm using STARMASH, theme: " + this.myname);
-        }.bind(this));
+                this.sendWhisper(this.myname + ' cannot find prowlers for you :(');
+            }.bind(this));
+            this.public.addCommand('-swam-ping', function (id, rest) {
+                if (rest !== '') return;
+
+                this.sendWhisper("I'm using STARMASH, theme: " + this.myname);
+            }.bind(this));
+        }
     }
     _registerWhisperCommands() {
         this.whisper.addCommand('-game-time', function (id, rest) {
