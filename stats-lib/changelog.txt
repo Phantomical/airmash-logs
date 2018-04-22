@@ -13,3 +13,9 @@ Changelog 2018-04-05
 	- Added GAME_WIN log entry for when a game is won
 	- Added SCORE_BOARD_DATA entry per player for when the score board 
 	  is updated
+	  
+Changelog 2018-04-21
+	- Changed PLAYER_LEVEL from being logged via PACKET to being
+	  logged with it's own tag
+	- Changed PLAYER_FLAG from being logged via packet to being
+	  logged with it's own tag

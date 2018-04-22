@@ -12,6 +12,12 @@ Makes STATSBOT print out the time since game start.
 If STATSBOT was restarted during the game, then it
 prints out the time since STATSBOT was started.
 
+-game-teams
+-----------
+
+Makes STATSBOT print out the number of players on 
+each team.
+
 -last-win
 ---------
 
