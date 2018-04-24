@@ -74,6 +74,10 @@ class AirmashClient {
             this.ws.send(packet);
     }
 
+    close() {
+        this.ws.close();
+    }
+
     _handleLogin(packet) {
         this.spectating = false;
         this.id = packet.id;

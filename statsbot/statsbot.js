@@ -394,6 +394,10 @@ function processServerCustom(packet) {
         team: obj.w,
         bounty: obj.b
     });
+
+    setTimeout(function () {
+        client.close();
+    }, 5 * 1000);
 }
 
 function logError(packet) {
