@@ -11,7 +11,7 @@ fn main() {
 	let args: Vec<String> = args().collect();
 
 	if args.len() < 3 {
-		println!("Usage: chatlog <type> <logfile>");
+		println!("Usage: filter <type> <logfile>");
 	}
 
 	let file = File::open(args[2].clone()).unwrap();

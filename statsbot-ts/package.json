@@ -1,5 +1,5 @@
 {
-  "name": "airmash-stat-bot",
+  "name": "airmash-stats-bot",
   "version": "0.0.0",
   "description": "statsbot",
   "main": "app.js",

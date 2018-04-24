@@ -22,9 +22,16 @@ fn write_value<'a>(v: &RecordValue<'a>) -> String {
 
 pub fn write_record<'a>(r: &Record<'a>) -> String {
 	let mut values = vec![r.tag.to_string()];
+	let mut entries = vec![];
 
 	for (key, value) in r.entries.iter() {
-		values.push(format!("{}: {}", key.to_string(), write_value(value)));
+		entries.push((key, format!("{}: {}", key.to_string(), write_value(value))));
+	}
+
+	entries.sort_by(|&(a, _), &(b, _)| a.cmp(b));
+
+	for (_, val) in entries.into_iter() {
+		values.push(val);
 	}
 
 	return format!("[{}]", values.join(", "));
