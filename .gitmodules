@@ -1,0 +1,8 @@
+[submodule "stats-lib"]
+	path = stats-lib
+	url = https://github.com/steamroller-airmash/statsbot-log-tools
+	branch = master
+[submodule "stats-lib-rs"]
+	path = stats-lib-rs
+	url = https://github.com/steamroller-airmash/statsbot-log-tools-rs
+	branch = master
