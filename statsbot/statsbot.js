@@ -363,17 +363,17 @@ function processScoreBoard(packet) {
                 maxdist2 = dist2;
                 nearestID = ranking.id;
             }
+
+            Logger.log("PLAYER_UPDATE", {
+                id: ranking.id,
+                pos: [ranking.x, ranking.y]
+            });
         }
 
         client.send({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "" + nearestID
-        });
-
-        Logger.log("PLAYER_UPDATE", {
-            id: ranking.id,
-            pos: [ranking.x, ranking.y]
         });
     }
 
