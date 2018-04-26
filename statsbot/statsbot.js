@@ -299,12 +299,6 @@ function processPlayerUpdate(packet) {
             pos: [packet.posX, packet.posY]
         });
     }
-
-    Logger.optional("PLAYER_UPDATE", {
-        id: packet.id,
-        upgrades: packet.upgrades,
-        pos: [packet.posX, packet.posY]
-    });
 }
 function processLeaveHorizon(packet) {
     Logger.debug("LEAVE_HORIZON", {
@@ -375,6 +369,11 @@ function processScoreBoard(packet) {
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "" + nearestID
+        });
+
+        Logger.log("PLAYER_UPDATE", {
+            id: ranking.id,
+            pos: [ranking.x, ranking.y]
         });
     }
 
