@@ -25,21 +25,6 @@ jobs:
                 root: ~/workspace
                 paths:
                     - anonymise
-
-    test:
-        working_directory: ~/repo
-    
-        docker:
-            - image: abronan/rust-circleci:latest
-        steps:
-            - checkout
-            - run: 
-                command: |
-                    git submodule update --init --recursive --remote
-            - run:
-                command: |
-                    cd ~/repo/stats-lib-rs
-                    rustup run stable cargo test
     statsbot_build:
         working_directory: ~/repo
         docker:
@@ -199,7 +184,6 @@ workflows:
     full_build:
         jobs:
             - build
-            - test
             - statsbot_build
             - balancebot_build
             - stats_lib_build
@@ -212,7 +196,6 @@ workflows:
                     - balancebot_build
                     - stats_lib_build
                     - doc_build
-                    - test
                     - statsbot_test1
                     
                     
