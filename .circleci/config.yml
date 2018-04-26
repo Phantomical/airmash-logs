@@ -11,6 +11,9 @@ jobs:
             - image: abronan/rust-circleci:latest
         steps:
             - checkout
+            - run: 
+                command: |
+                    git submodule update --init --recursive --remote
             - run:
                 command: mkdir ~/workspace
             - run:
@@ -30,6 +33,9 @@ jobs:
             - image: abronan/rust-circleci:latest
         steps:
             - checkout
+            - run: 
+                command: |
+                    git submodule update --init --recursive --remote
             - run:
                 command: |
                     cd ~/repo/stats-lib-rs
