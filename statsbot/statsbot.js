@@ -37,6 +37,9 @@ var ownerID = 0;
 var lowChat = true;
 var requestInterval;
 
+const BlueTeam = 1;
+const RedTeam = 2;
+
 function sendWhisper(msg, dest) {
     throttle(function () {
         client.send({
@@ -79,8 +82,15 @@ function getLastWin() {
             "and does not know which team won the last game.";
 }
 function getGameTeams() {
-    return "Blue team: " + client.blueteam.size + ", " +
-        "Red team: " + client.redteam.size + "";
+    if (client.team == BlueTeam) {
+        return "Blue team: " + (client.blueteam.size - 1) +
+            " + STATSBOT, Red team: " + client.redteam.size;
+    }
+    else {
+        return "Blue team: " + client.blueteam.size +
+            ", Red team: " + (client.redteam.size - 1) +
+            " + STATSBOT";
+    }
 }
 
 function processLogin(packet) {
