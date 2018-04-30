@@ -48,6 +48,9 @@
     <Compile Include="logger.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="throttle.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Content Include=".dockerignore">
       <SubType>Code</SubType>
     </Content>

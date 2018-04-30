@@ -3,12 +3,16 @@
 const AirmashClient = require('./client');
 const GameAssets = require('./gamecode');
 const Logger = require('./logger');
-const throttledQueue = require('throttled-queue');
+const throttledQueue = require('./throttle');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
+
+if (process.argv.length < 3) {
+    process.exit(-1);
+}
 
 // Suppress PLAYER_UPDATE
 Logger.active_info = true;
@@ -25,7 +29,7 @@ var client = new AirmashClient(
         horizonY: (1 << 16) - 1
     });
 
-var throttle = throttledQueue(2, 2000);
+var throttle = throttledQueue(4, 16 * 1000);
 
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
