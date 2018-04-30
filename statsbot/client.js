@@ -95,7 +95,8 @@ class AirmashClient {
                 level: player.level,
                 type: player.type,
                 team: player.team,
-                flag: player.flag
+                flag: player.flag,
+                spec: 0
             };
 
             if (player.team === 1) {
@@ -112,7 +113,8 @@ class AirmashClient {
             level: packet.level,
             type: packet.type,
             team: packet.team,
-            flag: packet.flag
+            flag: packet.flag,
+            spec: 0
         };
 
         if (packet.team === 1) {
@@ -186,6 +188,18 @@ class AirmashClient {
                 break;
         }
     }
+    _handleScoreBoard(packet) {
+        for (let idx in packet.rankings) {
+            let player = packet.rankings[idx];
+
+            if (player.x == 0 && player.y == 0) {
+                this.players[player.id].spec += 1;
+            }
+            else {
+                this.players[player.id].spec = 0;
+            }
+        }
+    }
 
     _messageHandler(packet) {
         this.callbacks.packet(packet);
@@ -226,6 +240,9 @@ class AirmashClient {
                 break;
             case SERVERPACKET.ERROR:
                 this._handleError(packet);
+                break;
+            case SERVERPACKET.SCORE_BOARD:
+                this._handleScoreBoard(packet);
                 break;
         }
     }

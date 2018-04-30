@@ -58,6 +58,17 @@ function sendChat(msg) {
     });
 }
 
+// Utility function for filtering players
+function filter(players, fn) {
+    let arr = [];
+    for (var i in players) {
+        if (fn(players[i])) {
+            arr.push(players[i]);
+        }
+    }
+    return arr;
+}
+
 function getGameTime() {
     var msPerMinute = 60 * 1000;
     var msPerHour = msPerMinute * 60;
@@ -91,6 +102,21 @@ function getGameTeams() {
             ", Red team: " + (client.redteam.size - 1) +
             " + STATSBOT";
     }
+}
+function getGameTeamsNospec() {
+    const specCutoff = 2;
+
+    let bluecnt = filter(client.players, function (e) {
+        return e.spec >= specCutoff && e.team == BlueTeam;
+    }).length;
+    let redcnt = filter(client.players, function (e) {
+        return e.spec >= specCutoff && e.team == RedTeam;
+    }).length;
+
+    return "Blue team: " + (client.blueteam.size - bluecnt) +
+        " (+" + bluecnt + " in spec), Red team: " +
+        (client.redteam.size - redcnt) + " (+" + redcnt +
+        " in spec)";
 }
 
 function processLogin(packet) {
@@ -215,6 +241,9 @@ function processWhisper(packet) {
     else if (packet.text.toUpperCase() === '-HELP' || packet.text.toUpperCase() === 'HELP') {
         sendWhisper(HELPTEXT, packet.from);
     }
+    else if (packet.text.toUpperCase() === "-GAME-TEAMS-NOSPEC") {
+        sendChat(getGameTeamsNospec(), packet.from);
+    }
 
     Logger.log("CHAT_WHISPER", {
         to: packet.to,
@@ -245,6 +274,9 @@ function processChatPublic(packet) {
     }
     else if (packet.text.toUpperCase() === '-STATSBOT-HELP') {
         sendChat(HELPTEXT);
+    }
+    else if (packet.text.toUpperCase() === "-GAME-TEAMS-NOSPEC") {
+        sendChat(getGameTeamsNospec());
     }
 
     Logger.log("CHAT_PUBLIC", {
