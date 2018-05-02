@@ -106,7 +106,7 @@ jobs:
                 command: |
                     cd ~
                     mv workspace statsbot
-                    tar cf - statsbot | gzip -9 - > statsbot.tar.gz
+                    tar czf statsbot.tar.gz statsbot
                 
             - store_artifacts:
                 path: ~/statsbot.tar.gz
