@@ -1,6 +1,6 @@
 #!/bin/bash
 
-circleci_token=febe68090284dccbfdee8255f8cef2ff7a0408c2
+circleci_token=86e2c6515aab5395ee0aa5e42e5aae4615cec3b7
 
 # The goal is to roll logs over every 6hrs
 cutoff_time=$(($(date -d '+12 hours' +%s) - $(date +%s) + 1))
