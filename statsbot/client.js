@@ -192,6 +192,11 @@ class AirmashClient {
         for (let idx in packet.rankings) {
             let player = packet.rankings[idx];
 
+            if (!this.players[player.id]) {
+                console.log("[ERR_UNKNOWN_PLAYER, id: " + player.id + "]");
+                continue;
+            }
+
             if (player.x == 0 && player.y == 0) {
                 this.players[player.id].spec += 1;
             }

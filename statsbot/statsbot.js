@@ -211,6 +211,12 @@ function processDetailedScore(packet) {
     }
 }
 function processWhisper(packet) {
+    Logger.log("CHAT_WHISPER", {
+        to: packet.to,
+        from: packet.from,
+        text: packet.text
+    });
+
     if (packet.text.toUpperCase() === '-GAME-TIME') {
         sendWhisper(getGameTime(), packet.from);
     }
@@ -244,14 +250,13 @@ function processWhisper(packet) {
     else if (packet.text.toUpperCase() === "-GAME-TEAMS-NOSPEC") {
         sendChat(getGameTeamsNospec(), packet.from);
     }
-
-    Logger.log("CHAT_WHISPER", {
-        to: packet.to,
-        from: packet.from,
-        text: packet.text
-    });
 }
 function processChatPublic(packet) {
+    Logger.log("CHAT_PUBLIC", {
+        id: packet.id,
+        text: packet.text
+    });
+
     if (packet.text.toUpperCase() === "-SWAM-PING") {
         sendWhisper("I'm using STARMASH, theme: " + MYNAME, packet.id);
     }
@@ -278,11 +283,6 @@ function processChatPublic(packet) {
     else if (packet.text.toUpperCase() === "-GAME-TEAMS-NOSPEC") {
         sendChat(getGameTeamsNospec());
     }
-
-    Logger.log("CHAT_PUBLIC", {
-        id: packet.id,
-        text: packet.text
-    });
 }
 function processPlayerRespawn(packet) {
     if (packet.id == client.id) {

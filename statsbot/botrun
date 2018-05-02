@@ -37,7 +37,6 @@ tar xzf statsbot.tar.gz
 
 # Update stats-lib from 
 rm logs/stats-lib.tar.gz
-cp statsbot/stats-lib.tar.gz logs/stats-lib.tar.gz
 
 # Wait 5s before rejoining
 # This should prevent being banned
