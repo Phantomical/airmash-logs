@@ -100,12 +100,6 @@ class AirmashClient {
         this.redscore = 0;
         this.bluescore = 0;
 
-        this.callbacks = {
-            packet: function () { },
-            close: function () { },
-            open: function () { }
-        };
-
         this._registerCallbacks();
 
         let me = this;
@@ -115,7 +109,7 @@ class AirmashClient {
     }
 
     // Register a listener for a packet
-    // to hook into all packets, override onpacket
+    // to hook into all packets, use "packet"
     on(type, fn) {
         this.evttgt.on(type, fn);
     }
@@ -302,7 +296,7 @@ class AirmashClient {
             flag: !!info.flag ? info.flag : 'XX'
         });
 
-        this.callbacks.open();
+        this.evttgt.emit("open");
     }
     onmessage(msg) {
         var packet = msg;
