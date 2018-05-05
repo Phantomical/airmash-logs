@@ -5,9 +5,9 @@ const CLIENTPACKET = require('./../gamecode').clientPacket;
 
 class FakeWebsocket {
     constructor() {
-        this.onmsg = function () { }
-        this.onclose = function () { }
-        this.onopen = function () { }
+        this.onmsg = function () { };
+        this.onclose = function () { };
+        this.onopen = function () { };
     }
 
     on(type, fn) {

@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build": "browserify --node statsbot.js | babel -s inline --presets=env > statsbot.min.js",
-    "lint": "jshint statsbot.js logger.js client.js",
+    "lint": "jshint .",
     "prebuild": "npm run lint",
     "start": "node statsbot.js"
   },
