@@ -131,7 +131,7 @@ class AirmashClient {
         this.evttgt.on("LOGIN", this._handleLogin.bind(this));
         this.evttgt.on("PLAYER_NEW", this._handlePlayerNew.bind(this));
         this.evttgt.on("PLAYER_LEAVE", this._handlePlayerLeave.bind(this));
-        this.evttgt.on("PLAYER_RETEAM", this._handlePlayerReteam.bind(this));
+        this.evttgt.on("PLAYER_RETEAM", this._handleReteam.bind(this));
         this.evttgt.on("PLAYER_LEVEL", this._handlePlayerLevel.bind(this));
         this.evttgt.on("PLAYER_TYPE", this._handlePlayerType.bind(this));
         this.evttgt.on("PLAYER_FLAG", this._handlePlayerFlag.bind(this));
