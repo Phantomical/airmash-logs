@@ -1,5 +1,6 @@
 'use strict';
 
+const EventEmitter = require('events');
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const throttledQueue = require('throttled-queue');
@@ -8,6 +9,59 @@ const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 const encodeMessage = GameAssets.encodeMessage;
 const decodeMessage = GameAssets.decodeMessage;
+
+function decodePacketType(type) {
+    const packetTypes = {
+        0: "LOGIN",
+        1: "BACKUP",
+        5: "PING",
+        6: "PING_RESULT",
+        7: "ACK",
+        8: "ERROR",
+        9: "COMMAND_REPLY",
+        10: "PLAYER_NEW",
+        11: "PLAYER_LEAVE",
+        12: "PLAYER_UPDATE",
+        13: "PLAYER_FIRE",
+        14: "PLAYER_HIT",
+        15: "PLAYER_RESPAWN",
+        16: "PLAYER_FLAG",
+        17: "PLAYER_KILL",
+        18: "PLAYER_UPGRADE",
+        19: "PLAYER_TYPE",
+        20: "PLAYER_POWERUP",
+        21: "PLAYER_LEVEL",
+        22: "PLAYER_RETEAM",
+        30: "GAME_FLAG",
+        31: "GAME_SPECTATE",
+        32: "GAME_PLAYERSALIVE",
+        33: "GAME_FIREWALL",
+        40: "EVENT_REPEL",
+        41: "EVENT_BOOST",
+        42: "EVENT_BOUNCE",
+        43: "EVENT_STEALTH",
+        44: "EVENT_LEAVEHORIZON",
+        60: "MOB_UPDATE",
+        61: "MOB_UPDATE_STATIONARY",
+        62: "MOB_DESPAWN",
+        63: "MOB_DESPAWN_COORDS",
+        70: "CHAT_PUBLIC",
+        71: "CHAT_TEAM",
+        72: "CHAT_SAY",
+        73: "CHAT_WISPER",
+        78: "CHAT_VOTEMUTEPASSED",
+        79: "CHAT_VOTEMUTED",
+        80: "SCORE_UPDATE",
+        81: "SCORE_BOARD",
+        82: "SCORE_DETAILED",
+        83: "SCORE_DETAILED_CTF",
+        84: "SCORE_DETAILED_BTR",
+        90: "SERVER_MESSAGE",
+        91: "SERVER_CUSTOM"
+    };
+
+    return packetTypes[type];
+}
 
 class AirmashClient {
     constructor(serverURL, restartOnDc, botInfo, buildwsfn, noDecode) {
@@ -32,6 +86,7 @@ class AirmashClient {
         this.decode = !noDecode;
         this.open = false;
         this.firstgame = true;
+        this.evttgt = new EventEmitter();
 
         this.isthrottled = false;
         this.isbanned = false;
@@ -51,6 +106,8 @@ class AirmashClient {
             open: function () { }
         };
 
+        this._registerCallbacks();
+
         let me = this;
         this.ws.on("open", function () { me.onopen(); });
         this.ws.on("message", function (msg) { me.onmessage(msg); });
@@ -60,7 +117,7 @@ class AirmashClient {
     // Register a listener for a packet
     // to hook into all packets, override onpacket
     on(type, fn) {
-        this.callbacks[type] = fn;
+        this.evttgt.on(type, fn);
     }
     // Send and encode a packet over the websocket
     send(packet) {
@@ -76,6 +133,21 @@ class AirmashClient {
 
     close() {
         this.ws.close();
+    }
+
+    _registerCallbacks() {
+        this.evttgt.on("LOGIN", this._handleLogin.bind(this));
+        this.evttgt.on("PLAYER_NEW", this._handlePlayerNew.bind(this));
+        this.evttgt.on("PLAYER_LEAVE", this._handlePlayerLeave.bind(this));
+        this.evttgt.on("PLAYER_RETEAM", this._handlePlayerReteam.bind(this));
+        this.evttgt.on("PLAYER_LEVEL", this._handlePlayerLevel.bind(this));
+        this.evttgt.on("PLAYER_TYPE", this._handlePlayerType.bind(this));
+        this.evttgt.on("PLAYER_FLAG", this._handlePlayerFlag.bind(this));
+        this.evttgt.on("PLAYER_RESPAWN", this._handlePlayerRespawn.bind(this));
+        this.evttgt.on("ERROR", this._handleError.bind(this));
+        this.evttgt.on("SCORE_BOARD", this._handleScoreBoard.bind(this));
+        this.evttgt.on("SERVER_CUSTOM", this._handleServerCustom.bind(this));
+        this.evttgt.on("GAME_SPECTATE", this._handleGameSpectate.bind(this));
     }
 
     _handleLogin(packet) {
@@ -205,51 +277,11 @@ class AirmashClient {
             }
         }
     }
-
-    _messageHandler(packet) {
-        this.callbacks.packet(packet);
-        if (!!this.callbacks[packet.c]) {
-            this.callbacks[packet.c](packet);
-        }
-
-        switch (packet.c) {
-            case SERVERPACKET.GAME_SPECTATE:
-                this.spectating = true;
-                break;
-            case SERVERPACKET.SERVER_CUSTOM:
-                this.lastWinner = JSON.parse(packet.data).w;
-                break;
-            case SERVERPACKET.LOGIN:
-                this._handleLogin(packet);
-                break;
-            case SERVERPACKET.PLAYER_NEW:
-                this._handlePlayerNew(packet);
-                break;
-            case SERVERPACKET.PLAYER_LEAVE:
-                this._handlePlayerLeave(packet);
-                break;
-            case SERVERPACKET.PLAYER_TYPE:
-                this._handlePlayerType(packet);
-                break;
-            case SERVERPACKET.PLAYER_LEVEL:
-                this._handlePlayerLevel(packet);
-                break;
-            case SERVERPACKET.PLAYER_FLAG:
-                this._handlePlayerFlag(packet);
-                break;
-            case SERVERPACKET.PLAYER_RETEAM:
-                this._handleReteam(packet);
-                break;
-            case SERVERPACKET.PLAYER_RESPAWN:
-                this._handlePlayerRespawn(packet);
-                break;
-            case SERVERPACKET.ERROR:
-                this._handleError(packet);
-                break;
-            case SERVERPACKET.SCORE_BOARD:
-                this._handleScoreBoard(packet);
-                break;
-        }
+    _handleServerCustom(packet) {
+        this.lastWinner = JSON.parse(packet.data).w;
+    }
+    _handleGameSpectate(packet) {
+        this.spectating = true;
     }
 
     onopen() {
@@ -284,7 +316,8 @@ class AirmashClient {
             });
         }
         else {
-            this._messageHandler(packet);
+            this.evttgt.emit("packet", packet);
+            this.evttgt.emit(decodePacketType(packet.c), packet);
         }
     }
     onclose(msg, code, reason) {
