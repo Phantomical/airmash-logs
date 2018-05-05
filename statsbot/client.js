@@ -95,8 +95,6 @@ class AirmashClient {
         this.redteam = new Set();
         this.blueteam = new Set();
 
-        this.callbacks = {};
-
         this.redscore = 0;
         this.bluescore = 0;
 
@@ -342,7 +340,7 @@ class AirmashClient {
             this.ws.on("close", function (a, b, c) { me.onclose(a, b, c); });
         }
 
-        this.callbacks.close(msg, code, reason);
+        this.evttgt.emit("close");
     }
 }
 
