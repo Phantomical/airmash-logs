@@ -37,10 +37,16 @@
     <Compile Include="airmash.js">
       <Publish>False</Publish>
     </Compile>
+    <Compile Include="bot.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="modules\commands.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="modules\logging.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\sb_requester.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\game-time.test.js" />
