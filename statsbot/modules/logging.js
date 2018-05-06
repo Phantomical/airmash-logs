@@ -128,7 +128,7 @@ class StatsbotLogger {
         });
     }
     handlePlayerType(packet) {
-        tihs.logger.log("PLAYER_TYPE", {
+        this.logger.log("PLAYER_TYPE", {
             id: packet.id,
             text: packet.text
         });
