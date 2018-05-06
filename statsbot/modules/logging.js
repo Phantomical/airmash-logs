@@ -346,3 +346,5 @@ class StatsbotLogger {
         this.logger.log("ERROR", obj);
     }
 }
+
+module.exports = StatsbotLogger;
