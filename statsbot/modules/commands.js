@@ -22,8 +22,7 @@ class CommandsModule {
         myname,
         myowner,
         logger,
-        throttle)
-    {
+        throttle) {
         this.throttle = throttle;
         this.logger = logger;
         this.elem = new EventEmitter();
@@ -32,9 +31,9 @@ class CommandsModule {
 
         if (activeCommands) {
             // API commands
-            this.elem.on("-game-time-api", onGameTimeApi.bind(this));
-            this.elem.on("-first-game-api", onFirstGameApi.bind(this));
-            this.elem.on("-game-start-api", onGameStartApi.bind(this));
+            this.elem.on("-api-game-time", this.onGameTimeApi.bind(this));
+            this.elem.on("-api-firstgame", this.onFirstGameApi.bind(this));
+            this.elem.on("-api-game-start", this.onGameStartApi.bind(this));
 
             // Whisper + Public commands
             this.elem.on("-game-time", this.onGameTime.bind(this));
@@ -66,14 +65,15 @@ class CommandsModule {
             // TODO: Allow for command arguments
             //let split = packet.text.split(' ', 2);
 
-            this.elem.emit(packet.text.toLowerCase(), this.parent);
+            this.elem.emit(packet.text.toLowerCase(), this.parent, packet.id, false);
         }.bind(this));
 
         parent.on("CHAT_WHISPER", function (packet) {
             this.elem.emit(
                 packet.text.toLowerCase(),
                 this.parent,
-                packet.from
+                packet.from,
+                true
             );
         }.bind(this));
     }
@@ -92,120 +92,138 @@ class CommandsModule {
         }
     }
 
-    send(parent, text, id) {
-        if (!!id) {
-            parent.client.send({
-                c: CLIENTPACKET.WHISPER,
-                id: id,
-                text: text
-            });
-        }
-        else {
-            parent.client.send({
-                c: CLIENTPACKET.CHAT,
-                text: text
-            });
+    sendWhisper(parent, text, id) {
+        parent.client.send({
+            c: CLIENTPACKET.WHISPER,
+            id: id,
+            text: text
+        });
+    }
+    sendChat(parent, text) {
+        parent.client.send({
+            c: CLIENTPACKET.CHAT,
+            text: text
+        });
+    }
+
+    send(parent, text, id, whisper) {
+        if (typeof whisper === "undefined") {
+            if (!!id) {
+                this.sendWhisper(parent, text, id);
+            } else {
+                this.sendChat(parent, text);
+            }
+        } else {
+            if (whisper) {
+                this.sendWhisper(parent, text, id);
+            } else {
+                this.sendChat(parent, text);
+            }
         }
     }
 
     // API Commands
-    onGameTimeApi(parent, id) {
+    onGameTimeApi(parent, id, whisper) {
         // Whisper command only
-        if (!id) return;
+        if (!whisper) return;
 
         this.throttle(function () {
             var time = '' + (new Date() - parent.client.gameStart);
             this.send(parent, time, id);
         }.bind(this));
     }
-    onFirstGameApi(parent, id) {
+    onFirstGameApi(parent, id, whisper) {
         // Whisper command only
-        if (!id) return;
+        if (!whisper) return;
 
         this.throttle(function () {
             this.send(
                 parent,
-                parent.client.firstgame,
+                '' + parent.client.firstgame,
                 id
             );
         }.bind(this));
     }
-    onGameStartApi(parent, id) {
+    onGameStartApi(parent, id, whisper) {
         // Whisper command only
-        if (!id) return;
+        if (!whisper) return;
 
         this.throttle(function () {
             this.send(
                 parent,
-                parent.client.gameStart.getTime(),
+                '' + parent.client.gameStart.getTime(),
                 id
             );
         }.bind(this));
     }
 
     // Whisper + Public commands
-    onGameTime(parent, id) {
+    onGameTime(parent, id, whisper) {
         this.throttle(function () {
             var msPerMinute = 60 * 1000;
             var msPerHour = msPerMinute * 60;
 
-            var time = new Date() - client.gameStart;
+            var time = new Date() - parent.client.gameStart;
             var text = '' + Math.floor(time / msPerHour) +
                 ' hours, ' + (Math.floor(time / msPerMinute) % 60) +
                 ' minutes, and ' + (Math.floor(time / 1000) % 60) +
                 ' seconds have elapsed since this game started.';
 
-            this.send(parent, text, id);
+            this.send(parent, text, id, whisper);
         }.bind(this));
     }
-    onLastWin(parent, id) {
+    onLastWin(parent, id, whisper) {
         this.throttle(function () {
             var msg;
 
-            if (client.lastWinner === 1)
+            if (parent.client.lastWinner === 1)
                 msg = "The last game was won by blue team.";
-            else if (client.lastWinner === 2)
+            else if (parent.client.lastWinner === 2)
                 msg = "The last game was won by red team.";
             else
                 msg = this.myname + " has been restarted since this game " +
-                    "and does not know which team won the last game.";
+                    "started and does not know which team won the last game.";
 
-            this.send(parent, msg, id);
+            this.send(parent, msg, id, whisper);
         }.bind(this));
     }
-    onGameTeams(parent, id) {
+    onGameTeams(parent, id, whisper) {
         this.throttle(function () {
+            let bluesize = parent.client.blueteam.size;
+            let redsize = parent.client.redteam.size;
+
             var msg;
-            if (client.team == 1) {
-                msg = "Blue team: " + (client.blueteam.size - 1) +
-                    " + STATSBOT, Red team: " + client.redteam.size;
+            if (parent.client.team == 1) {
+                msg = "Blue team: " + (bluesize - 1) +
+                    " + STATSBOT, Red team: " + redsize;
             }
             else {
-                msg = "Blue team: " + client.blueteam.size +
-                    ", Red team: " + (client.redteam.size - 1) +
+                msg = "Blue team: " + bluesize +
+                    ", Red team: " + (redsize - 1) +
                     " + STATSBOT";
             }
 
-            this.send(parent, msg, id);
+            this.send(parent, msg, id, whisper);
         }.bind(this));
     }
-    onGameTeamsNospec(parent, id) {
+    onGameTeamsNospec(parent, id, whisper) {
         this.throttle(function () {
             const specCutoff = 2;
+            let bluesize = parent.client.blueteam.size;
+            let redsize = parent.client.redteam.size;
 
-            let bluecnt = filter(client.players, function (e) {
-                return e.spec >= specCutoff && e.team == BlueTeam;
+            let bluecnt = filter(parent.client.players, function (e) {
+                return e.spec >= specCutoff && e.team == 1;
             }).length;
-            let redcnt = filter(client.players, function (e) {
-                return e.spec >= specCutoff && e.team == RedTeam;
+            let redcnt = filter(parent.client.players, function (e) {
+                return e.spec >= specCutoff && e.team == 2;
             }).length;
 
-            var msg = "Blue team: " + (client.blueteam.size - bluecnt) +
+            var msg = "Blue team: " + (bluesize - bluecnt) +
                 " (+" + bluecnt + " in spec), Red team: " +
-                (client.redteam.size - redcnt) + " (+" + redcnt +
-                " in spec)";
+                (redsize - redcnt) + " (+" + redcnt + " in spec)";
 
-            this.send(parent, msg, id);
+            this.send(parent, msg, id, whisper);
         }.bind(this));
     }
     onStatsbotHelp(parent, id) {
@@ -215,13 +233,13 @@ class CommandsModule {
     }
 
     // Whisper-only commands
-    onAnonMeQuiet(parent, id) {
-        if (!id) return;
+    onAnonMeQuiet(parent, id, whisper) {
+        if (!whisper) return;
 
         this.logger.log("ANONYMISE", { id: id });
     }
-    onAnonMe(parent, id) {
-        if (!id) return;
+    onAnonMe(parent, id, whisper) {
+        if (!whisper) return;
 
         onAnonMeQuiet(parent, id);
 
@@ -232,8 +250,8 @@ class CommandsModule {
             this.send(parent, text, id);
         }.bind(this));
     }
-    onHelp(parent, id) {
-        if (!id) return;
+    onHelp(parent, id, whisper) {
+        if (!whisper) return;
 
         this.throttle(function () {
             this.send(parent, HELPTEXT, id);
@@ -241,8 +259,8 @@ class CommandsModule {
     }
 
     // Public-only comands
-    onSwamPing(parent, id) {
-        if (!!id) return;
+    onSwamPing(parent, id, whisper) {
+        if (whisper) return;
 
         this.throttle(function () {
             this.send(
@@ -252,19 +270,19 @@ class CommandsModule {
             );
         }.bind(this));
     }
-    onBotPing(parent, id) {
-        if (!!id) return;
+    onBotPing(parent, id, whisper) {
+        if (whisper) return;
 
         this.throttle(function () {
             this.send(
                 parent,
-                "I am " + this.myname + ", owner: " + this.owner,
+                "I am " + this.myname + ", owner: " + this.myowner,
                 id
             );
         }.bind(this));
     }
-    onProwPing(parent, id) {
-        if (!!id) return;
+    onProwPing(parent, id, whisper) {
+        if (whisper) return;
 
         this.throttle(function () {
             this.send(

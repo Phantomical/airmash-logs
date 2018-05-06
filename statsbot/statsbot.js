@@ -8,13 +8,15 @@ const throttledQueue = require('./throttle');
 const CommandModule = require('./modules/commands');
 const LoggingModule = require('./modules/logging');
 const ScoreBoardRequester = require('./modules/sb_requester');
+const AutoSpectate = require('./modules/autospec');
 
 const Bot = require('./bot');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-const serverURL = 'wss://game-' + GameAssets.PlayHost + '.airma.sh/' + GameAssets.PlayPath;
+const serverURL = 'wss://game-' + GameAssets.playHost +
+    '.airma.sh/' + GameAssets.playPath;
 
 if (process.argv.length < 3) {
     process.exit(-1);
@@ -28,7 +30,8 @@ var chatThrottle = throttledQueue(4, 16 * 1000);
 const modules = {
     command: new CommandModule(true, MYNAME, OWNER, Logger, chatThrottle),
     logging: new LoggingModule(Logger),
-    sb_requester: new ScoreBoardRequester(30 * 1000)
+    sb_requester: new ScoreBoardRequester(30 * 1000),
+    autospec: new AutoSpectate(5 * 1000)
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,
