@@ -48,7 +48,7 @@ function decodePacketType(type) {
         70: "CHAT_PUBLIC",
         71: "CHAT_TEAM",
         72: "CHAT_SAY",
-        73: "CHAT_WISPER",
+        73: "CHAT_WHISPER",
         78: "CHAT_VOTEMUTEPASSED",
         79: "CHAT_VOTEMUTED",
         80: "SCORE_UPDATE",
