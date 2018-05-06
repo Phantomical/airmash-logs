@@ -37,8 +37,8 @@ var ownerID = 0;
 var lowChat = true;
 var requestInterval;
 
-const BlueTeam = 1;
-const RedTeam = 2;
+const BlueTeam = 2;
+const RedTeam = 1;
 
 function sendWhisper(msg, dest) {
     throttle(function () {
