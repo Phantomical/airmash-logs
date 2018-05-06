@@ -12,8 +12,8 @@ class ScoreBoardRequester {
         this.cancelToken = setInterval(function () {
             parent.client.send({
                 c: CLIENTPACKET.SCOREDETAILED
-            }, this.period);
-        });
+            });
+        }, this.period);
     }
 }
 
