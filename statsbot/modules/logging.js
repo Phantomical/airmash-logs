@@ -65,7 +65,9 @@ class StatsbotLogger {
         });
     }
     handlePlayerLeave(packet) {
-        this.logger.log("PLAYER_LEAVE");
+        this.logger.log("PLAYER_LEAVE", {
+            id: packet.id
+        });
     }
     handlePlayerLevel(packet) {
         this.logger.log("PLAYER_LEVEL", {
