@@ -9,6 +9,7 @@ const CommandModule = require('./modules/commands');
 const LoggingModule = require('./modules/logging');
 const ScoreBoardRequester = require('./modules/sb_requester');
 const AutoSpectate = require('./modules/autospec');
+const GameEndLeaveModule = require('./modules/rejoin');
 
 const Bot = require('./bot');
 
@@ -31,7 +32,8 @@ const modules = {
     command: new CommandModule(true, MYNAME, OWNER, Logger, chatThrottle),
     logging: new LoggingModule(Logger),
     sb_requester: new ScoreBoardRequester(30 * 1000),
-    autospec: new AutoSpectate(5 * 1000)
+    autospec: new AutoSpectate(5 * 1000),
+    rejoin: new GameEndLeaveModule()
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,
