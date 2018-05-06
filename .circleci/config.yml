@@ -171,7 +171,6 @@ workflows:
                 requires:
                     - build
                     - statsbot_build
-                    - balancebot_build
                     - stats_lib_build
                     - doc_build
                     - statsbot_test1
