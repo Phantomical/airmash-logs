@@ -45,28 +45,7 @@ jobs:
                 root: ~/workspace
                 paths:
                     - statsbot.min.js
-                    
-    balancebot_build:
-        working_directory: ~/repo
-        docker:
-            - image: circleci/node:6.11-stretch
-            
-        steps:
-            - checkout
-            - run:
-                command: mkdir ~/workspace
-            - run:
-                command: |
-                    cd ~/repo/balancebot
-                    npm install --depth 0
-                    npm run build
-                    mv balancebot.min.js ~/workspace/balancebot.min.js
-                    
-            - persist_to_workspace:
-                root: ~/workspace
-                paths:
-                    - balancebot.min.js
-                    
+                                        
     stats_lib_build:
         working_directory: ~/repo
         docker:
@@ -185,7 +164,6 @@ workflows:
         jobs:
             - build
             - statsbot_build
-            - balancebot_build
             - stats_lib_build
             - doc_build
             - statsbot_test1
@@ -193,7 +171,6 @@ workflows:
                 requires:
                     - build
                     - statsbot_build
-                    - balancebot_build
                     - stats_lib_build
                     - doc_build
                     - statsbot_test1

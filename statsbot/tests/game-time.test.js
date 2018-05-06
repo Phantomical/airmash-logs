@@ -9,13 +9,13 @@ const decodeMessage = GameAssets.decodeMessage;
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-var client = {}
+var client = {};
 
 class FakeWebsocket {
     constructor() {
-        this.onmsg = function () { }
-        this.onclose = function () { }
-        this.onopen = function () { }
+        this.onmsg = function () { };
+        this.onclose = function () { };
+        this.onopen = function () { };
     }
 
     on(type, fn) {
@@ -34,7 +34,6 @@ class FakeWebsocket {
         if (packet.c === CLIENTPACKET.CHAT) {
             console.log(packet.text);
         }
-
     }
 
     runtest() {

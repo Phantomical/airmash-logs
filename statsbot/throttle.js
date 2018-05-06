@@ -25,5 +25,5 @@ module.exports = function (n, t) {
         else {
             data.queue.push(f);
         }
-    }
-}
+    };
+};
