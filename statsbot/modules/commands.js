@@ -165,7 +165,7 @@ class CommandsModule {
     onGameTeams(parent, id) {
         this.throttle(function () {
             var msg;
-            if (client.team == BlueTeam) {
+            if (client.team == 1) {
                 msg = "Blue team: " + (client.blueteam.size - 1) +
                     " + STATSBOT, Red team: " + client.redteam.size;
             }
