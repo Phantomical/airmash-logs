@@ -5,6 +5,17 @@ const GameCode = require('../gamecode');
 const CLIENTPACKET = GameCode.clientPacket;
 const HELPTEXT = 'STATSBOT docs: https://steamroller.starma.sh/statsbot';
 
+// Utility function for filtering players
+function filter(players, fn) {
+    let arr = [];
+    for (var i in players) {
+        if (fn(players[i])) {
+            arr.push(players[i]);
+        }
+    }
+    return arr;
+}
+
 class CommandsModule {
     constructor(
         activeCommands,
