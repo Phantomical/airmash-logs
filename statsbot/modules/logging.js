@@ -7,6 +7,7 @@ class StatsbotLogger {
             red: 0,
             blue: 0
         };
+        this.gameCount = 0;
     }
 
     register(parent) {
@@ -236,7 +237,8 @@ class StatsbotLogger {
 
         this.logger.log("GAME_WIN", {
             team: obj.w,
-            bounty: obj.b
+            bounty: obj.b,
+            game_id: this.gameCount
         });
     }
     handleGameSpectate(packet) {
