@@ -206,6 +206,10 @@ class AirmashClient {
 
             this.players[player.id].team = player.team;
 
+            if (player.id === this.id) {
+                this.team = player.team;
+            }
+
             if (player.team === 2) {
                 // Player is joining red team
                 this.blueteam.delete(player.id);

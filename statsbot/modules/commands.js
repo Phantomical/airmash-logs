@@ -241,7 +241,7 @@ class CommandsModule {
     onAnonMe(parent, id, whisper) {
         if (!whisper) return;
 
-        onAnonMeQuiet(parent, id);
+        this.onAnonMeQuiet(parent, id, whisper);
 
         this.throttle(function () {
             let text = "You will now be anonymised from " +
