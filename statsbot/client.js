@@ -4,6 +4,7 @@ const EventEmitter = require('events');
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 const throttledQueue = require('throttled-queue');
+const storage = require('node-persist');
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -73,6 +74,19 @@ class AirmashClient {
 
         this.ws = buildwsfn(serverURL);
         this.ws.binaryType = 'arraybuffer';
+
+        storage.init()
+            .then(() => {
+                return storage.getItem('game-start');
+            })
+            .then((val) => {
+                if (val) {
+                    this.gameStart = new Date(val);
+                }
+                else {
+                    storage.setItem('game-start', this.gameStart.getTime());
+                }
+            });
 
         this.id = 0;
         this.team = 0;
@@ -221,12 +235,13 @@ class AirmashClient {
                 this.blueteam.add(player.id);
             }
         }
-
-        let me = this;
+        
         setTimeout(function () {
-            me.gameStart = new Date();
+            this.gameStart = new Date();
             this.firstgame = false;
-        }, 30 * 1000);
+
+            storage.setItem('game-start', me.gameStart.getTime());
+        }.bind(this), 30 * 1000);
     }
     _handlePlayerLevel(packet) {
         this.players[packet.id].level = packet.level;

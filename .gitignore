@@ -15,11 +15,7 @@ statsbot/node_modules/
 statsbot/.vs/
 statsbot/package-lock.json
 statsbot/statsbot.min.js
-
-statsbot-ts/node_modules/
-statsbot-ts/.vs/
-statsbot-ts/package-lock.json
-statsbot-ts/statsbot.min.js
+statsbot/.node-persist
 
 balancebot/node_modules/
 balancebot/.vs/
