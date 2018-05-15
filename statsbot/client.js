@@ -240,7 +240,7 @@ class AirmashClient {
             this.gameStart = new Date();
             this.firstgame = false;
 
-            storage.setItem('game-start', me.gameStart.getTime());
+            storage.setItem('game-start', this.gameStart.getTime());
         }.bind(this), 30 * 1000);
     }
     _handlePlayerLevel(packet) {

@@ -219,9 +219,13 @@ class CommandsModule {
                 return e.spec >= specCutoff && e.team == 2;
             }).length;
 
-            var msg = "Blue team: " + (bluesize - bluecnt) +
-                " (+" + bluecnt + " in spec), Red team: " +
-                (redsize - redcnt) + " (+" + redcnt + " in spec)";
+            let blueafk = parent.afk.afkCount(1);
+            let redafk = parent.afk.afkCount(2);
+
+            var msg = "Blue team: " + (bluesize - bluecnt - blueafk) +
+                " (+" + bluecnt + " in spec, +" + blueafk +
+                " afk), Red team: " + (redsize - redcnt - redafk) +
+                " (+" + redcnt + " in spec, +" + redafk + " afk)";
 
             this.send(parent, msg, id, whisper);
         }.bind(this));
