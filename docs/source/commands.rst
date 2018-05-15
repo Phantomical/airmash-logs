@@ -24,6 +24,16 @@ each team.
 To use this in-game, say :code:`-game-teams` in the 
 public chat.
 
+-game-teams-nospec
+------------------
+
+Makes STATSBOT print out the number of players on
+each team, but excluding all players who are 
+spectating.
+
+To use this in-game, say :code:`-game-teams-nospec`
+in the public chat.
+
 -last-win
 ---------
 
@@ -88,6 +98,15 @@ except whispers the time to the player that
 issued the command.
 
 To use this in game, type :code:`/w STATSBOT -game-teams`
+
+-game-teams-nospec
+------------------
+
+Makes STATSBOT print out the number of players on
+each team, but excluding all players who are 
+spectating.
+
+To use this in game, type :code:`/w STATSBOT -game-teams-nospec`
 
 -last-win
 ---------
