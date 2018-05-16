@@ -17,7 +17,7 @@ const Bot = require('./bot');
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-const serverURL = 'wss://game-' + 'eu-s1' +// GameAssets.playHost +
+const serverURL = 'wss://game-' + GameAssets.playHost +
     '.airma.sh/' + GameAssets.playPath;
 
 if (process.argv.length < 3) {
