@@ -30,9 +30,6 @@ class AFKDetector {
 
     afkCount(team) {
         let cnt = 0;
-        console.log(this.players);
-        console.log(this.parent.client.players);
-
         let todel = [];
 
         for (var id in this.players) {
