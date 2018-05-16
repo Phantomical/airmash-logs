@@ -30,7 +30,17 @@ class AFKDetector {
 
     afkCount(team) {
         let cnt = 0;
+        console.log(this.players);
+        console.log(this.parent.client.players);
+
+        let todel = [];
+
         for (var id in this.players) {
+            if (!this.parent.client.players[id]) {
+                todel.push(id);
+                continue;
+            }
+
             if (this.players[id].count >= this.threshold &&
                 this.parent.client.players[id].team === team &&
                 this.players[id].x != 0 && this.players[id].y != 0)
@@ -38,6 +48,11 @@ class AFKDetector {
                 cnt += 1;
             }
         }
+
+        todel.forEach((val) => {
+            delete this.players[val];
+        });
+
         return cnt;
     }
 
