@@ -11,6 +11,7 @@ const ScoreBoardRequester = require('./modules/sb_requester');
 const AutoSpectate = require('./modules/autospec');
 const GameEndLeaveModule = require('./modules/rejoin');
 const AFKDetectorModule = require('./modules/afk-detect');
+const ScoreTracker = require('./modules/score-tracker');
 
 const Bot = require('./bot');
 
@@ -32,10 +33,11 @@ var chatThrottle = throttledQueue(4, 16 * 1000);
 const modules = {
     command: new CommandModule(true, MYNAME, OWNER, Logger, chatThrottle),
     logging: new LoggingModule(Logger),
-    sb_requester: new ScoreBoardRequester(30 * 1000),
+    sb_requester: new ScoreBoardRequester(20 * 1000),
     autospec: new AutoSpectate(5 * 1000),
     rejoin: new GameEndLeaveModule(),
-    afk: new AFKDetectorModule(4)
+    afk: new AFKDetectorModule(4),
+    scores: new ScoreTracker()
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,

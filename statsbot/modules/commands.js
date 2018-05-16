@@ -41,6 +41,7 @@ class CommandsModule {
             this.elem.on("-game-teams", this.onGameTeamsNospec.bind(this));
             this.elem.on("-game-teams-nospec", this.onGameTeamsNospec.bind(this));
             this.elem.on("-statsbot-help", this.onStatsbotHelp.bind(this));
+            this.elem.on("-team-bounty", this.onTeamScores.bind(this));
 
             // Whisper-only commands
             this.elem.on("-anon-me-quiet", this.onAnonMeQuiet.bind(this));
@@ -223,8 +224,8 @@ class CommandsModule {
             redcnt += parent.afk.afkCount(2);
 
             var msg = "Blue team: " + (bluesize - bluecnt) +
-                " (+" + bluecnt + " afk), Red team: " +
-                (redsize - redcnt) + " (+" + redcnt + " afk)";
+                " (+" + bluecnt + " idle), Red team: " +
+                (redsize - redcnt) + " (+" + redcnt + " idle)";
 
             this.send(parent, msg, id, whisper);
         }.bind(this));
@@ -232,6 +233,14 @@ class CommandsModule {
     onStatsbotHelp(parent, id) {
         this.throttle(function () {
             this.send(parent, HELPTEXT, id);
+        }.bind(this));
+    }
+    onTeamScores(parent, id, whisper) {
+        this.throttle(function () {
+            let text = "Blue team: " + parent.scores.blue +
+                ", Red team: " + parent.scores.red;
+
+            this.send(parent, text, id, whisper);
         }.bind(this));
     }
 

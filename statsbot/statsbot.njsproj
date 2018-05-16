@@ -40,6 +40,9 @@
     <Compile Include="bot.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\afk-detect.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="modules\autospec.js">
       <SubType>Code</SubType>
     </Compile>
@@ -53,6 +56,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="modules\sb_requester.js">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="modules\score-tracker.js">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="tests\game-time.test.js" />
