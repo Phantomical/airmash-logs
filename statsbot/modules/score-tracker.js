@@ -8,7 +8,7 @@ class ScoreTracker {
     register(parent) {
         this.parent = parent;
 
-        parent.on("SCORE_DETAILED_CTF", this.onScoreDetailed.bind(this))
+        parent.on("SCORE_DETAILED_CTF", this.onScoreDetailed.bind(this));
     }
 
     onScoreDetailed(packet) {
