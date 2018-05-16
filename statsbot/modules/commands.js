@@ -38,7 +38,7 @@ class CommandsModule {
             // Whisper + Public commands
             this.elem.on("-game-time", this.onGameTime.bind(this));
             this.elem.on("-last-win", this.onLastWin.bind(this));
-            this.elem.on("-game-teams", this.onGameTeams.bind(this));
+            this.elem.on("-game-teams", this.onGameTeamsNospec.bind(this));
             this.elem.on("-game-teams-nospec", this.onGameTeamsNospec.bind(this));
             this.elem.on("-statsbot-help", this.onStatsbotHelp.bind(this));
 
@@ -219,13 +219,12 @@ class CommandsModule {
                 return e.spec >= specCutoff && e.team == 2;
             }).length;
 
-            let blueafk = parent.afk.afkCount(1);
-            let redafk = parent.afk.afkCount(2);
+            bluecnt += parent.afk.afkCount(1);
+            redcnt += parent.afk.afkCount(2);
 
-            var msg = "Blue team: " + (bluesize - bluecnt - blueafk) +
-                " (+" + bluecnt + " in spec, +" + blueafk +
-                " afk), Red team: " + (redsize - redcnt - redafk) +
-                " (+" + redcnt + " in spec, +" + redafk + " afk)";
+            var msg = "Blue team: " + (bluesize - bluecnt) +
+                " (+" + bluecnt + " afk), Red team: " +
+                (redsize - redcnt) + " (+" + redcnt + " afk)";
 
             this.send(parent, msg, id, whisper);
         }.bind(this));
