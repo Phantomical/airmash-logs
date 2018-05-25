@@ -13,7 +13,11 @@ const PlayPath = GameAssets.playPath;
 const OWNER = "STEAMROLLER"
 const MYNAME = "LOGBOT"
 
-var client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
+const URL = 'ws://localhost:3501'
+//'wss://game-eu-s1.airma.sh/ctf1';
+//'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
+
+var client = new WebSocket(URL);
 client.binaryType = 'arraybuffer';
 
 var selfID = 0;
@@ -305,7 +309,7 @@ const onopen = function () {
         // Expand view range of bot
         horizonX: (1 << 16) - 1,
         horizonY: (1 << 16) - 1,
-        flag: 'ca'
+        flag: 'eu'
     }));
 
     // Make statsbot spectate on joining    
@@ -318,7 +322,7 @@ const onopen = function () {
     }, 1000);
 };
 const onclose = function () {
-    client = new WebSocket('wss://game-' + PlayHost + '.airma.sh/' + PlayPath);
+    client = new WebSocket(URL);
     client.binaryType = 'arraybuffer';
 
     client.on('close', onclose);

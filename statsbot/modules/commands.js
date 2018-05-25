@@ -230,9 +230,9 @@ class CommandsModule {
             this.send(parent, msg, id, whisper);
         }.bind(this));
     }
-    onStatsbotHelp(parent, id) {
+    onStatsbotHelp(parent, id, whisper) {
         this.throttle(function () {
-            this.send(parent, HELPTEXT, id);
+            this.send(parent, HELPTEXT, id, whisper);
         }.bind(this));
     }
     onTeamScores(parent, id, whisper) {
