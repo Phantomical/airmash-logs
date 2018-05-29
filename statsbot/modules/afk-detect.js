@@ -52,6 +52,15 @@ class AFKDetector {
 
         return cnt;
     }
+    isAfk(player) {
+        return (
+            !this.players[player] ||
+            this.players[player].count > this.threshold ||
+            (
+                this.players[player].x == 0 &&
+                this.players[player].y == 0
+            ));
+    }
 
     register(parent) {
         this.parent = parent;

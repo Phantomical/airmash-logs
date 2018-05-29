@@ -42,6 +42,7 @@ class CommandsModule {
             this.elem.on("-game-teams-nospec", this.onGameTeamsNospec.bind(this));
             this.elem.on("-statsbot-help", this.onStatsbotHelp.bind(this));
             this.elem.on("-team-bounty", this.onTeamScores.bind(this));
+            this.elem.on("-team-bounty-nospec", this.onTeamScoresNospec.bind(this));
 
             // Whisper-only commands
             this.elem.on("-anon-me-quiet", this.onAnonMeQuiet.bind(this));
@@ -239,6 +240,14 @@ class CommandsModule {
         this.throttle(function () {
             let text = "Blue team: " + parent.scores.blue +
                 ", Red team: " + parent.scores.red;
+
+            this.send(parent, text, id, whisper);
+        }.bind(this));
+    }
+    onTeamScoresNospec(parent, id, whisper) {
+        this.throttle(function () {
+            let text = "Blue team: " + parent.scores.blue_active +
+                ", Red team: " + parent.scores.red_active;
 
             this.send(parent, text, id, whisper);
         }.bind(this));
