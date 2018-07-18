@@ -10,12 +10,17 @@ const decodeMessage = GameAssets.decodeMessage;
 const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
-const OWNER = "STEAMROLLER"
-const MYNAME = "LOGBOT"
+const OWNER = "STEAMROLLER";
+const MYNAME = "LOGBOT";
 
-const URL = 'ws://localhost:3501'
-//'wss://game-eu-s1.airma.sh/ctf1';
-//'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
+const URLS = [
+    'wss://game-eu-s1.airma.sh/ffa1',
+    'ws://localhost:3501',
+    'wss://dev.airmash.steamroller.tk',
+    'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
+];
+
+const URL = URLS[0];
 
 var client = new WebSocket(URL);
 client.binaryType = 'arraybuffer';
@@ -24,6 +29,8 @@ var selfID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
+
+//console.log = function() {}
 
 function getDateTime() {
 
@@ -64,6 +71,7 @@ function processChatPublic(packet) {
     }
 }
 function processPlayerRespawn(packet) {
+    return;
     if (packet.id == selfID) {
         // Make statsbot spectate on new game   
         setTimeout(function () {
@@ -197,7 +205,7 @@ function logError(packet) {
             break;
     }
 
-    Logger.log("ERROR", obj);
+    console.log("ERROR", JSON.stringify(obj));
 }
 function decodePacketType(type) {
     const packetTypes = {
@@ -277,6 +285,7 @@ function logPacket(packet) {
 
     switch (packet.c) {
         default:
+            packet.c = decodePacketType(packet.c)
             packet.time = getDateTime();
             console.log(JSON.stringify(packet));
     }
@@ -311,6 +320,16 @@ const onopen = function () {
         horizonY: (1 << 16) - 1,
         flag: 'eu'
     }));
+    
+    setTimeout(function () {
+        client.send(encodeMessage({
+            c: CLIENTPACKET.COMMAND,
+            com: "respawn",
+            data: "3"
+        }));
+    }, 3000);
+
+    return
 
     // Make statsbot spectate on joining    
     setTimeout(function () {
@@ -319,7 +338,7 @@ const onopen = function () {
             com: "spectate",
             data: "-3"
         }));
-    }, 1000);
+    }, 3000);
 };
 const onclose = function () {
     client = new WebSocket(URL);
