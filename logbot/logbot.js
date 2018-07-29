@@ -3,6 +3,8 @@
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 
+console.log = () => {}
+
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 const encodeMessage = GameAssets.encodeMessage;
@@ -20,7 +22,7 @@ const URLS = [
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
 ];
 
-const URL = URLS[0];
+const URL = URLS[1];
 
 var client = new WebSocket(URL);
 client.binaryType = 'arraybuffer';
