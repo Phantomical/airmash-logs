@@ -24,7 +24,7 @@
     "ws": "^5.1.1"
   },
   "scripts": {
-    "build": "browserify statsbot.js --node || true > statsbot.min.js",
+    "build": "browserify statsbot.js --node > statsbot.min.js",
     "lint": "jshint .",
     "prebuild": "npm run lint",
     "start": "node statsbot.js"
