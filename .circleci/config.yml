@@ -37,6 +37,10 @@ jobs:
             - run:
                 command: |
                     cd ~/repo/statsbot
+                    echo "{" "\"$DISCORD_TOKEN\"" "}" > config.json
+            - run:
+                command: |
+                    cd ~/repo/statsbot
                     npm install --depth 0
                     npm run build
                     mv statsbot.min.js ~/workspace/statsbot.min.js

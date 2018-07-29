@@ -52,6 +52,9 @@
     <Compile Include="modules\logging.js">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="modules\notify-discord.js">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="modules\rejoin.js">
       <SubType>Code</SubType>
     </Compile>

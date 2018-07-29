@@ -12,6 +12,7 @@ const AutoSpectate = require('./modules/autospec');
 const GameEndLeaveModule = require('./modules/rejoin');
 const AFKDetectorModule = require('./modules/afk-detect');
 const ScoreTracker = require('./modules/score-tracker');
+const DiscordNotifier = require('./modules/notify-discord');
 
 const Bot = require('./bot');
 
@@ -38,7 +39,8 @@ const modules = {
     autospec: new AutoSpectate(5 * 1000),
     rejoin: new GameEndLeaveModule(),
     afk: new AFKDetectorModule(4),
-    scores: new ScoreTracker()
+    scores: new ScoreTracker(),
+    discord: new DiscordNotifier(25)
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,
