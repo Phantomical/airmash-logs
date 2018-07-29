@@ -11,7 +11,6 @@ class StatsbotLogger {
     }
 
     register(parent) {
-        return;
         parent.on('LOGIN', this.handleLogin.bind(this));
         parent.on('PLAYER_NEW', this.handlePlayerNew.bind(this));
         parent.on('PLAYER_LEAVE', this.handlePlayerLeave.bind(this));
