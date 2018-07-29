@@ -37,7 +37,7 @@ jobs:
             - run:
                 command: |
                     cd ~/repo/statsbot
-                    echo "{" "\"token\":" ""\"$DISCORD_TOKEN\"" "}" > config.json
+                    echo "{" "\"token\":" "\"$DISCORD_TOKEN\"" "}" > config.json
             - run:
                 command: |
                     cd ~/repo/statsbot
