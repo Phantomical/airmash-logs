@@ -21,7 +21,7 @@
     "rollup-plugin-node-resolve": "^3.3.0",
     "throttled-queue": "^1.0.5",
     "utf-8-validate": "^4.0.1",
-    "ws": "^5.1.1",
+    "ws": "^5.1.1"
   },
   "scripts": {
     "build": "browserify statsbot.js --node || true > statsbot.min.js",
