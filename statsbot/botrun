@@ -24,7 +24,7 @@ if [ -s log ]; then
 	mv log $tdir/log
 	
 	# Anonymise the log in the background
-	bash -c "statsbot/anonymise $tdir/log | gzip -9 > $filename-$ctr.gz && rm -rf $tdir" &
+	bash -c "statsbot/anonymise $tdir/log | bzip2 --best > $filename-$ctr.bz2 && rm -rf $tdir" &
 fi
 
 # Download required artifacts from CircleCI

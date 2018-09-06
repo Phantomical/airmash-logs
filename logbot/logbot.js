@@ -3,7 +3,7 @@
 const WebSocket = require('ws');
 const GameAssets = require('./gamecode');
 
-console.log = () => {}
+//console.log = () => {}
 
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
@@ -16,13 +16,13 @@ const OWNER = "STEAMROLLER";
 const MYNAME = "LOGBOT";
 
 const URLS = [
-    'wss://game-eu-s1.airma.sh/ffa1',
+    'wss://game-us-s1.airma.sh/btr1',
     'ws://localhost:3501',
     'wss://dev.airmash.steamroller.tk',
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
 ];
 
-const URL = URLS[1];
+const URL = URLS[0];
 
 var client = new WebSocket(URL);
 client.binaryType = 'arraybuffer';
@@ -31,8 +31,6 @@ var selfID = 0;
 var flagCarrierRed = 0;
 var flagCarrierBlue = 0;
 var ownerID = 0;
-
-//console.log = function() {}
 
 function getDateTime() {
 
@@ -73,8 +71,8 @@ function processChatPublic(packet) {
     }
 }
 function processPlayerRespawn(packet) {
-    return;
-    if (packet.id == selfID) {
+    if (packet.id === selfID) {
+        return;
         // Make statsbot spectate on new game   
         setTimeout(function () {
             client.send(encodeMessage({
@@ -87,12 +85,12 @@ function processPlayerRespawn(packet) {
 }
 function processChatWhisper(packet) {
     // Apparently packet.from is the current player 
-    if (packet.to == ownerID) {
+    if (packet.to === ownerID) {
         if (packet.text === ':restart') {
-            process.exit(2)
+            process.exit(2);
         }
         else if (packet.text === ':shutdown') {
-            process.exit(1)
+            process.exit(1);
         }
     }
 
@@ -101,7 +99,7 @@ function processChatWhisper(packet) {
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "" + packet.from
-        }))
+        }));
     }
 }
 
@@ -262,32 +260,32 @@ function decodePacketType(type) {
     return packetTypes[type];
 }
 function logPacket(packet) {
-    if (packet.c == SERVERPACKET.LOGIN) {
+    if (packet.c === SERVERPACKET.LOGIN) {
         selfID = packet.id;
     }
-    else if (packet.c == SERVERPACKET.PLAYER_NEW) {
+    else if (packet.c === SERVERPACKET.PLAYER_NEW) {
         if (packet.name === OWNER) {
             ownerID = packet.id;
         }
     }
-    else if (packet.c == SERVERPACKET.PLAYER_LEAVE) {
-        if (packet.id == ownerID) {
+    else if (packet.c === SERVERPACKET.PLAYER_LEAVE) {
+        if (packet.id === ownerID) {
             ownerID = 0;
         }
     }
-    else if (packet.c == SERVERPACKET.CHAT_PUBLIC) {
+    else if (packet.c === SERVERPACKET.CHAT_PUBLIC) {
         processChatPublic(packet);
     }
-    else if (packet.c == SERVERPACKET.PLAYER_RESPAWN) {
+    else if (packet.c === SERVERPACKET.PLAYER_RESPAWN) {
         processPlayerRespawn(packet);
     }
-    else if (packet.c == SERVERPACKET.CHAT_WHISPER) {
+    else if (packet.c === SERVERPACKET.CHAT_WHISPER) {
         processChatWhisper(packet);
     }
 
     switch (packet.c) {
         default:
-            packet.c = decodePacketType(packet.c)
+            packet.c = decodePacketType(packet.c);
             packet.time = getDateTime();
             console.log(JSON.stringify(packet));
     }
@@ -331,7 +329,7 @@ const onopen = function () {
         }));
     }, 3000);
 
-    return
+    return;
 
     // Make statsbot spectate on joining    
     setTimeout(function () {
