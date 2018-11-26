@@ -19,8 +19,10 @@ const Bot = require('./bot');
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-const serverURL ='wss://game-' + GameAssets.playHost +
-    '.airma.sh/' + GameAssets.playPath;
+const serverURL = "wss://us.airmash.online/ctf1";
+
+    //'wss://game-' + GameAssets.playHost +
+    //'.airma.sh/' + GameAssets.playPath;
 //'ws://127.0.0.1:3501'
 
 if (process.argv.length < 3) {
