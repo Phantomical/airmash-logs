@@ -7,6 +7,8 @@ stats-lib/logs/
 logbot/node_modules/
 logbot/.vs/
 logbot/package-lock.json
+logbot/log.json
+logbot/log2.json
 
 stats-lib/.vs/
 stats-lib/__pycache__/

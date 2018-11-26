@@ -16,13 +16,13 @@ const OWNER = "STEAMROLLER";
 const MYNAME = "LOGBOT";
 
 const URLS = [
-    'wss://game-us-s1.airma.sh/btr1',
+    'wss://game-us-s1.airma.sh/ctf1',
     'ws://localhost:3501',
     'wss://dev.airmash.steamroller.tk',
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
 ];
 
-const URL = URLS[0];
+const URL = URLS[1];
 
 var client = new WebSocket(URL);
 client.binaryType = 'arraybuffer';

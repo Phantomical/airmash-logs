@@ -596,7 +596,6 @@ let decodeMessage = function (e, t) {
                 } else {
                     l = n.getUint16(i, !0);
                     i += 2
-                    console.log(l)
                 }
                 for (var u = new Uint8Array(l), c = 0; c < l; c++) u[c] = n.getUint8(i + c, !0);
                 var h = Tools.decodeUTF8(u);
