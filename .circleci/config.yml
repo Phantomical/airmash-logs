@@ -41,8 +41,8 @@ jobs:
             - run:
                 command: |
                     cd ~/repo/statsbot
-                    npm install --depth 0
-                    npm run build
+                    yarn install
+                    yarn run build
                     mv statsbot.min.js ~/workspace/statsbot.min.js
                     
             - persist_to_workspace:

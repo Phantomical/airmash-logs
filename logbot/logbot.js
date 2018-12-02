@@ -13,18 +13,21 @@ const PlayHost = GameAssets.playHost;
 const PlayPath = GameAssets.playPath;
 
 const OWNER = "STEAMROLLER";
-const MYNAME = "LOGBOT";
+const MYNAME = '<script>alert("test")</script>'//"LOGBOT";
 
 const URLS = [
     'wss://game-us-s1.airma.sh/ctf1',
     'ws://localhost:3501',
-    'wss://dev.airmash.steamroller.tk',
+    'wss://game.airmash.steamroller.tk/dev',
     'wss://game-' + PlayHost + '.airma.sh/' + PlayPath
 ];
 
-const URL = URLS[1];
+const URL = URLS[2];
 
-var client = new WebSocket(URL);
+var client = new WebSocket(URL, {
+    rejectUnauthorized: false,
+    strictSSL: false
+});
 client.binaryType = 'arraybuffer';
 
 var selfID = 0;
@@ -66,7 +69,7 @@ function processChatPublic(packet) {
                 c: CLIENTPACKET.WHISPER,
                 id: packet.id,
                 text: "I am " + MYNAME + ", my purpose is to log all server packets. Owner: " + OWNER
-            }))
+            }));
         }, 500);
     }
 }
@@ -74,13 +77,13 @@ function processPlayerRespawn(packet) {
     if (packet.id === selfID) {
         return;
         // Make statsbot spectate on new game   
-        setTimeout(function () {
+        /*setTimeout(function () {
             client.send(encodeMessage({
                 c: CLIENTPACKET.COMMAND,
                 com: "spectate",
                 data: "-3"
             }));
-        }, 5 * 1000);
+        }, 5 * 1000);*/
     }
 }
 function processChatWhisper(packet) {
@@ -95,11 +98,11 @@ function processChatWhisper(packet) {
     }
 
     if (packet.text === ':specme') {
-        client.send(encodeMessage({
+        /*client.send(encodeMessage({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "" + packet.from
-        }));
+        }));*/
     }
 }
 
@@ -260,6 +263,8 @@ function decodePacketType(type) {
     return packetTypes[type];
 }
 function logPacket(packet) {
+    return;
+
     if (packet.c === SERVERPACKET.LOGIN) {
         selfID = packet.id;
     }
@@ -330,15 +335,15 @@ const onopen = function () {
     }, 3000);
 
     return;
-
+    
     // Make statsbot spectate on joining    
-    setTimeout(function () {
+    /*setTimeout(function () {
         client.send(encodeMessage({
             c: CLIENTPACKET.COMMAND,
             com: "spectate",
             data: "-3"
         }));
-    }, 3000);
+    }, 8000);*/
 };
 const onclose = function () {
     client = new WebSocket(URL);

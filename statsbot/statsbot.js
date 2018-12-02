@@ -19,7 +19,7 @@ const Bot = require('./bot');
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-const serverURL = "wss://us.airmash.online/ctf1";
+const serverURL = "wss://game.airmash.steamroller.tk/dev";
 
     //'wss://game-' + GameAssets.playHost +
     //'.airma.sh/' + GameAssets.playPath;

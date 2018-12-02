@@ -68,7 +68,10 @@ class AirmashClient {
     constructor(serverURL, restartOnDc, botInfo, buildwsfn, noDecode) {
         if (!buildwsfn) {
             buildwsfn = function (url) {
-                return new WebSocket(serverURL);
+                return new WebSocket(serverURL, {
+                    rejectUnauthorized: false,
+                    strictSSL: false
+                });
             };
         }
 
