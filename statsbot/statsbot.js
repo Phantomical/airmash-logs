@@ -19,10 +19,10 @@ const Bot = require('./bot');
 const SERVERPACKET = GameAssets.serverPacket;
 const CLIENTPACKET = GameAssets.clientPacket;
 
-const serverURL = "wss://game.airmash.steamroller.tk/dev";
+//const serverURL = "wss://game.airmash.steamroller.tk/dev";
 
-    //'wss://game-' + GameAssets.playHost +
-    //'.airma.sh/' + GameAssets.playPath;
+const serverURL = 'wss://game-' + GameAssets.playHost +
+    '.airma.sh/' + GameAssets.playPath;
 //'ws://127.0.0.1:3501'
 
 if (process.argv.length < 3) {
@@ -42,7 +42,7 @@ const modules = {
     rejoin: new GameEndLeaveModule(),
     afk: new AFKDetectorModule(4),
     scores: new ScoreTracker(),
-    discord: new DiscordNotifier(25)
+    discord: new DiscordNotifier(10)
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,
