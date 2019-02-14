@@ -42,7 +42,7 @@ const modules = {
     rejoin: new GameEndLeaveModule(),
     afk: new AFKDetectorModule(4),
     scores: new ScoreTracker(),
-    discord: new DiscordNotifier(10)
+    discord: new DiscordNotifier(15)
 };
 const client = new AirmashClient(serverURL, true, {
     name: MYNAME,
